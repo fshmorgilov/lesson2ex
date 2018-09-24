@@ -28,7 +28,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/layout_margin"
             android:layout_marginTop="@dimen/layout_margin"
-            android:layout_below="@id/main_photo"
             >
 
             <TextView

@@ -14,6 +14,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:scaleType="centerCrop"
+        android:contentDescription="@string/main_photo_descr"
 
         android:src="@drawable/placeholder" />
 
@@ -38,6 +39,7 @@
         android:layout_alignStart="@id/description"
         android:layout_alignTop="@id/description"
         android:scaleType="fitCenter"
+        android:contentDescription="@string/content_descr_worked_logo"
         android:src="@drawable/modular_mining_logo" />
 
 

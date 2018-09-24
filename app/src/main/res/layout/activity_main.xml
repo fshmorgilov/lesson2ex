@@ -12,38 +12,47 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/main_photo_portrait_width"
         android:layout_alignParentTop="true"
-        android:scaleType="centerCrop"
         android:contentDescription="@string/main_photo_descr"
+        android:scaleType="centerCrop"
         android:src="@drawable/placeholder" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/main_photo"
         android:layout_above="@id/send_mail"
-        >
+        android:layout_below="@id/main_photo"
+        android:layout_marginTop="@dimen/layout_margin">
+
         <RelativeLayout
             android:id="@+id/description"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/layout_margin"
-            android:layout_marginTop="@dimen/layout_margin"
-            >
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/description_general"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/layout_margin"
+                android:background="@color/text_view_background"
+                android:padding="@dimen/common_padding"
+                android:paddingEnd="@dimen/common_padding"
+                android:paddingStart="@dimen/description_left_padding"
+                android:text="@string/description_general_text"
+                android:textSize="@dimen/common_text_size" />
 
             <TextView
                 android:id="@+id/description_modular"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/layout_margin"
-                android:layout_marginTop="@dimen/layout_margin"
+                android:layout_alignTop="@id/description_modular"
                 android:layout_below="@id/description_general"
                 android:background="@color/text_view_background"
+                android:layout_marginTop="@dimen/layout_margin"
                 android:padding="@dimen/common_padding"
                 android:paddingEnd="@dimen/common_padding"
                 android:paddingStart="@dimen/description_left_padding"
                 android:text="@string/description_modular_text"
-                android:textSize="@dimen/common_text_size"
-                />
+                android:textSize="@dimen/common_text_size" />
 
             <ImageView
                 android:layout_width="@dimen/description_logo"
@@ -54,45 +63,29 @@
                 android:contentDescription="@string/content_descr_worked_logo"
                 android:scaleType="fitXY"
                 android:src="@drawable/modular_mining_logo" />
+
             <TextView
                 android:id="@+id/description_tinkoff"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/layout_margin"
-                android:layout_marginTop="@dimen/layout_margin"
                 android:layout_below="@id/description_modular"
+                android:layout_marginTop="@dimen/social_button_margin"
                 android:background="@color/text_view_background"
                 android:padding="@dimen/common_padding"
                 android:paddingEnd="@dimen/common_padding"
                 android:paddingStart="@dimen/description_left_padding"
                 android:text="@string/description_tinkoff_text"
-                android:textSize="@dimen/common_text_size"
-                />
+                android:textSize="@dimen/common_text_size" />
 
-            <TextView
-                android:id="@+id/description_general"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/layout_margin"
-                android:layout_marginTop="@dimen/layout_margin"
-                android:background="@color/text_view_background"
-                android:padding="@dimen/common_padding"
-                android:paddingEnd="@dimen/common_padding"
-                android:paddingStart="@dimen/description_left_padding"
-                android:text="@string/description_general_text"
-                android:textSize="@dimen/common_text_size"
-                />
         </RelativeLayout>
     </ScrollView>
-
 
 
     <RelativeLayout
         android:id="@+id/button_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        >
+        android:layout_alignParentBottom="true">
 
         <Button
             android:id="@+id/social_facebook"

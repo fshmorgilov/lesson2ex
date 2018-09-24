@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -80,30 +79,37 @@
             />
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/social_facebook"
-        android:layout_width="@dimen/common_social_btn"
-        android:layout_height="@dimen/common_social_btn"
-        android:layout_alignTop="@+id/social_instagram"
-        android:layout_toStartOf="@+id/social_instagram" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        >
 
-    <Button
-        android:id="@+id/social_instagram"
-        android:layout_width="@dimen/common_social_btn"
-        android:layout_height="@dimen/common_social_btn"
-        android:layout_below="@id/send_mail"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="@dimen/social_button_margin"
-        android:layout_marginStart="@dimen/social_button_margin"
-        android:layout_marginTop="@dimen/social_button_margin" />
+        <Button
+            android:id="@+id/social_facebook"
+            android:layout_width="@dimen/common_social_btn"
+            android:layout_height="@dimen/common_social_btn"
+            android:layout_alignTop="@+id/social_instagram"
+            android:layout_toStartOf="@+id/social_instagram" />
 
-    <Button
-        android:id="@+id/social_telegram"
-        android:layout_width="@dimen/common_social_btn"
-        android:layout_height="@dimen/common_social_btn"
-        android:layout_alignTop="@+id/social_instagram"
-        android:layout_toEndOf="@+id/social_instagram" />
+        <Button
+            android:id="@+id/social_instagram"
+            android:layout_width="@dimen/common_social_btn"
+            android:layout_height="@dimen/common_social_btn"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="@dimen/social_button_margin"
+            android:layout_marginStart="@dimen/social_button_margin"
+            android:layout_marginTop="@dimen/social_button_margin" />
+
+        <Button
+            android:id="@+id/social_telegram"
+            android:layout_width="@dimen/common_social_btn"
+            android:layout_height="@dimen/common_social_btn"
+            android:layout_alignTop="@+id/social_instagram"
+            android:layout_toEndOf="@+id/social_instagram" />
+
+    </RelativeLayout>
 
     <EditText
         android:id="@+id/send_mail"

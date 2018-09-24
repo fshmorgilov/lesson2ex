@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/layout_margin"
+
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/main_photo"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:background="#AAA000"
+        android:scaleType="center"
+        android:src="@drawable/placeholder" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/main_photo"
+        android:background="@color/text_view_background"
+        android:padding="@dimen/common_padding"
+        android:text="Hello World!" />
+
+    <Button
+        android:id="@+id/social_facebook"
+        android:layout_width="@dimen/common_social_btn"
+        android:layout_height="@dimen/common_social_btn"
+        android:layout_alignTop="@+id/social_instagram"
+        android:layout_toStartOf="@+id/social_instagram"
+        />
+
+    <Button
+        android:id="@+id/social_instagram"
+        android:layout_width="@dimen/common_social_btn"
+        android:layout_height="@dimen/common_social_btn"
+        android:layout_below="@id/send_mail"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="@dimen/social_button_margin"
+        android:layout_marginStart="@dimen/social_button_margin"
+        android:layout_marginEnd="@dimen/social_button_margin"
+        />
+
+    <Button
+        android:id="@+id/social_telegram"
+        android:layout_width="@dimen/common_social_btn"
+        android:layout_height="@dimen/common_social_btn"
+        android:layout_alignTop="@+id/social_instagram"
+        android:layout_toEndOf="@+id/social_instagram" />
+
+    <EditText
+        android:id="@+id/send_mail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/description"
+        android:background="@color/colorAccent"
+        android:hint="@string/contact_me"
+        android:inputType="textAutoCorrect" />
+
+</RelativeLayout>

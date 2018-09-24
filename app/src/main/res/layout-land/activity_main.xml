@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -15,33 +16,70 @@
         android:layout_alignParentTop="true"
         android:scaleType="centerCrop"
         android:contentDescription="@string/main_photo_descr"
-
         android:src="@drawable/placeholder" />
 
 
-    <TextView
-        android:id="@+id/description_modular"
+    <RelativeLayout
+        android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/layout_margin"
         android:layout_marginTop="@dimen/layout_margin"
-        android:layout_toEndOf="@+id/main_photo"
-        android:background="@color/text_view_background"
-        android:padding="@dimen/common_padding"
-        android:paddingEnd="8dp"
-        android:paddingStart="@dimen/description_left_padding"
-        android:text="@string/description_modular_text" />
+        android:layout_toEndOf="@+id/main_photo">
 
-    <ImageView
-        android:layout_width="@dimen/description_logo"
-        android:layout_height="@dimen/description_logo"
-        android:layout_alignBottom="@id/description_modular"
-        android:layout_alignStart="@id/description_modular"
-        android:layout_alignTop="@id/description_modular"
-        android:scaleType="fitCenter"
-        android:contentDescription="@string/content_descr_worked_logo"
-        android:src="@drawable/modular_mining_logo" />
+        <TextView
+            android:id="@+id/description_modular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/layout_margin"
+            android:layout_marginTop="@dimen/layout_margin"
+            android:layout_below="@id/description_general"
+            android:background="@color/text_view_background"
+            android:padding="@dimen/common_padding"
+            android:paddingEnd="@dimen/common_padding"
+            android:paddingStart="@dimen/description_left_padding"
+            android:text="@string/description_modular_text"
+            android:textSize="@dimen/common_text_size"
+            />
 
+        <ImageView
+            android:layout_width="@dimen/description_logo"
+            android:layout_height="@dimen/description_logo"
+            android:layout_alignBottom="@id/description_modular"
+            android:layout_alignStart="@id/description_modular"
+            android:layout_alignTop="@id/description_modular"
+            android:contentDescription="@string/content_descr_worked_logo"
+            android:scaleType="fitXY"
+            android:src="@drawable/modular_mining_logo" />
+        <TextView
+            android:id="@+id/description_tinkoff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/layout_margin"
+            android:layout_marginTop="@dimen/layout_margin"
+            android:layout_below="@id/description_modular"
+            android:background="@color/text_view_background"
+            android:padding="@dimen/common_padding"
+            android:paddingEnd="@dimen/common_padding"
+            android:paddingStart="@dimen/description_left_padding"
+            android:text="@string/description_tinkoff_text"
+            android:textSize="@dimen/common_text_size"
+            />
+
+        <TextView
+            android:id="@+id/description_general"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/layout_margin"
+            android:layout_marginTop="@dimen/layout_margin"
+            android:background="@color/text_view_background"
+            android:padding="@dimen/common_padding"
+            android:paddingEnd="@dimen/common_padding"
+            android:paddingStart="@dimen/description_left_padding"
+            android:text="@string/description_general_text"
+            android:textSize="@dimen/common_text_size"
+            />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -80,7 +118,7 @@
         android:id="@+id/send_mail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/description_modular"
+        android:layout_below="@+id/description"
         android:layout_marginStart="@dimen/layout_margin"
         android:layout_marginTop="@dimen/layout_margin"
         android:layout_toEndOf="@id/main_photo"

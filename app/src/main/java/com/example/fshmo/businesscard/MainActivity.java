@@ -6,14 +6,19 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String LTAG = MainActivity.class.getName();
+    private final String[] addresses = new String[]{"fshmorgilov@gmail.com"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,19 @@ public class MainActivity extends AppCompatActivity {
         final Button telegramBtn = findViewById(R.id.social_telegram);
         telegramBtn.setBackgroundResource(R.drawable.telegram_logo);
         telegramBtn.setOnClickListener(v -> openWebPage("https://t.me/Iyanamas"));
+
+        final EditText sendMail = findViewById(R.id.send_mail);
+        final String text = sendMail.getText().toString().trim();
+        sendMail.setOnEditorActionListener((v, actionId, event) -> {
+            if(actionId == EditorInfo.IME_ACTION_SEND){
+                Log.i(LTAG, "Composing email");
+                composeEmail(addresses, "Nice to meet you!", text);
+            }
+            return false;
+        });
+
+        //TODO Tablet mode
+        //TODO TV mode
 
     }
 
@@ -57,9 +75,12 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(Intent.EXTRA_EMAIL, addresses);
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, body);
+        Log.i(LTAG,"Composing email. \n Subject: " + subject + "\n Body : " + body);
         final String errorMessage = "No email app";
-        if (intent.resolveActivity(getPackageManager()) != null)
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            Log.i(LTAG, "Composed");
             startActivity(intent);
+        }
         else {
             Log.i(LTAG, errorMessage);
             showToast(errorMessage);

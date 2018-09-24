@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="common_margin">50dp</dimen>
-    <dimen name="common_padding">30dp</dimen>
+    <dimen name="common_padding">16dp</dimen>
     <dimen name="common_social_btn">50dp</dimen>
     <dimen name="layout_margin">5dp</dimen>
     <dimen name="social_button_margin">8dp</dimen>
+    <dimen name="description_logo">40dp</dimen>
+    <dimen name="description_left_padding">48dp</dimen>
 </resources>

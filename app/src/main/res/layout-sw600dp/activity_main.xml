@@ -72,7 +72,6 @@
             android:background="@color/text_view_background"
             android:padding="@dimen/common_padding"
             android:paddingEnd="@dimen/common_padding"
-            android:paddingStart="@dimen/description_left_padding"
             android:text="@string/description_general_text"
             android:textSize="@dimen/common_text_size_sw600dp"
             />

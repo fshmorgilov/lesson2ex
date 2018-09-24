@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">BusinessCard</string>
+    <string name="app_name">Fedor Shmorgilov</string>
     <string name="contact_me">Contact me!</string>
     <string name="description_general_text">Fedor has been in IT for 6 years. Professional in systems analysis and software engineering</string>
-    <string name="description_tinkoff_text">As systems analyst, Fedor managed to finish tinkoff ATM project from scratch to production in only 7 months</string>
-    <string name="description_modular_text">As software engineer, Fedor traveled 5 eurasian mines to perform Customer Assurance Program</string>
+    <string name="description_tinkoff_text">As systems analyst, managed to finish tinkoff ATM project from scratch to production in only 7 months</string>
+    <string name="description_modular_text">As software engineer, traveled 5 eurasian mines to perform Customer Assurance Program</string>
     <string name="content_descr_worked_logo">company i worker for</string>
     <string name="main_photo_descr">Main photo</string>
 </resources>

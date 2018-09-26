@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/layout_margin"
-
     tools:context=".MainActivity">
 
     <ImageView
@@ -46,43 +45,39 @@
                 android:layout_alignTop="@id/description_modular"
                 android:layout_below="@id/description_general"
                 android:layout_marginBottom="@dimen/layout_margin"
-                android:background="@color/text_view_background"
+                android:layout_toEndOf="@+id/modular_logo"
                 android:padding="@dimen/common_padding"
                 android:paddingEnd="@dimen/common_padding"
-                android:paddingStart="@dimen/description_left_padding"
                 android:text="@string/description_modular_text"
                 android:textSize="@dimen/common_text_size" />
 
             <ImageView
+                android:id="@+id/modular_logo"
                 android:layout_width="@dimen/description_logo"
                 android:layout_height="@dimen/description_logo"
-                android:layout_alignBottom="@id/description_modular"
-                android:layout_alignStart="@id/description_modular"
                 android:layout_alignTop="@id/description_modular"
                 android:contentDescription="@string/content_descr_worked_logo"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 android:src="@drawable/modular_mining_logo" />
 
             <TextView
                 android:id="@+id/description_tinkoff"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/tinkoff_logo"
                 android:layout_below="@id/description_modular"
-                android:background="@color/text_view_background"
                 android:padding="@dimen/common_padding"
                 android:paddingEnd="@dimen/common_padding"
-                android:paddingStart="@dimen/description_left_padding"
                 android:text="@string/description_tinkoff_text"
                 android:textSize="@dimen/common_text_size" />
 
             <ImageView
+                android:id="@+id/tinkoff_logo"
                 android:layout_width="@dimen/description_logo"
                 android:layout_height="@dimen/description_logo"
-                android:layout_alignBottom="@id/description_tinkoff"
-                android:layout_alignStart="@id/description_tinkoff"
                 android:layout_alignTop="@id/description_tinkoff"
                 android:contentDescription="@string/content_descr_worked_logo"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 android:src="@drawable/tinkoff_logo" />
 
         </RelativeLayout>

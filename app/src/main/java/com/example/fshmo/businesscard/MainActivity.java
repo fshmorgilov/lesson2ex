@@ -11,6 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String LTAG = MainActivity.class.getName();
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
+
 
         //TODO Tablet mode
         //TODO TV mode

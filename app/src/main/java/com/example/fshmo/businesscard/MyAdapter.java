@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
@@ -34,12 +36,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
 
         public void bind(NewsItem newsItem) {
-
             categoryTextView.setText(newsItem.getCategory().getName());
             headerTextView.setText(newsItem.getTitle());
             textTextView.setText(newsItem.getFullText());
             dateTextView.setText(newsItem.getPublishDate().toString());
-            //TODO add Photo
+            Glide.with(photo.getContext()) //FIXME Переделать контекст
+                    .load(newsItem.getImageUrl()).into(photo);
         }
     }
 

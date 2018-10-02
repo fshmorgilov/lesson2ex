@@ -41,7 +41,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             textTextView.setText(newsItem.getFullText());
             dateTextView.setText(newsItem.getPublishDate().toString());
             Glide.with(photo.getContext()) //FIXME Переделать контекст
-                    .load(newsItem.getImageUrl()).into(photo);
+                    .load(newsItem.getImageUrl())
+                    .into(photo);
         }
     }
 

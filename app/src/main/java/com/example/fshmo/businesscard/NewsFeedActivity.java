@@ -24,15 +24,11 @@ public class NewsFeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_feed);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
         recyclerView.setHasFixedSize(true);
 
-        // use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        // specify an adapter (see also next example)
         adapter = new MyAdapter(DataUtils.generateNews());
         recyclerView.setAdapter(adapter);
 
@@ -42,9 +38,6 @@ public class NewsFeedActivity extends AppCompatActivity {
         ((DividerItemDecoration) decoration).setDrawable(drawable);
         recyclerView.addItemDecoration(decoration);
 
-//        recyclerView.addOnItemTouchListener(
-//                new RecItem
-//        );
     }
 
     public static float dpToPixels(@NonNull final Context context, final float sizeInDp) {

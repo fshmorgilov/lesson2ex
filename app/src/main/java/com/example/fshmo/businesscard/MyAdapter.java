@@ -38,7 +38,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             photo = v.findViewById(R.id.photo);
         }
 
-        public void bind(final NewsItem newsItem) {
+        public void bind(final NewsItem newsItem, OnItemClickListener onItemClickListener) {
             categoryTextView.setText(newsItem.getCategory().getName());
             headerTextView.setText(newsItem.getTitle());
             textTextView.setText(newsItem.getFullText());
@@ -51,6 +51,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     public MyAdapter(List<NewsItem> myDataset, OnItemClickListener clickListener) {
         dataset = myDataset;
+        this.onItemClickListener = clickListener;
     }
 
     // Create new views (invoked by the layout manager)
@@ -67,7 +68,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public void onBindViewHolder(MyViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.bind(dataset.get(position));
+        holder.bind(dataset.get(position), onItemClickListener);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

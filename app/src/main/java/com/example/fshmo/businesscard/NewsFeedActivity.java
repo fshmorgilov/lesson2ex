@@ -33,7 +33,12 @@ public class NewsFeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_feed);
         int orientation = this.getResources().getConfiguration().orientation;
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        adapter = new MyAdapter(DataUtils.generateNews());
+        adapter = new MyAdapter(DataUtils.generateNews(), new MyAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(NewsItem item) {
+                NewsDetailsActivity.start(NewsFeedActivity.this, DataUtils.generateNews().indexOf(item));
+            }
+        });
         decoration = new GridSpaceItemDecoration(4, 4);
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {

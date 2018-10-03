@@ -1,5 +1,7 @@
 package com.example.fshmo.businesscard;
 
+import android.support.annotation.Nullable;
+
 import java.util.Date;
 
 public class NewsItem {
@@ -44,5 +46,10 @@ public class NewsItem {
   public String getFullText() {
     return fullText;
   }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return (obj instanceof NewsItem && getTitle().equals(((NewsItem) obj).getTitle()));
+    }
 }
 

@@ -27,10 +27,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         private TextView textTextView;
         private TextView dateTextView;
         private ImageView photo;
+        private View view;
 
 
         public MyViewHolder(View v) {
             super(v);
+            this.view = v;
             categoryTextView = v.findViewById(R.id.category);
             headerTextView = v.findViewById(R.id.header);
             textTextView = v.findViewById(R.id.text);
@@ -46,6 +48,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             Glide.with(photo.getContext()) //FIXME Переделать контекст
                     .load(newsItem.getImageUrl())
                     .into(photo);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick(newsItem);
+                }
+            });
         }
     }
 

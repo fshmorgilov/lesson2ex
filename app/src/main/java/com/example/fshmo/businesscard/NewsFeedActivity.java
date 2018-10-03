@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Surface;
@@ -19,6 +20,7 @@ import java.util.Objects;
 
 public class NewsFeedActivity extends AppCompatActivity {
 
+    private static final String LTAG = NewsFeedActivity.class.getCanonicalName();
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -36,6 +38,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         adapter = new MyAdapter(DataUtils.generateNews(), new MyAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(NewsItem item) {
+                Log.e(LTAG, item.getTitle());
                 NewsDetailsActivity.start(NewsFeedActivity.this, DataUtils.generateNews().indexOf(item));
             }
         });
@@ -45,8 +48,6 @@ public class NewsFeedActivity extends AppCompatActivity {
             layoutManager = new LinearLayoutManager(this);
         } else
             layoutManager = new GridLayoutManager(this, 2);
-
-
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);

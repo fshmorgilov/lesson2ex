@@ -20,9 +20,9 @@ public class NewsDetailsActivity extends AppCompatActivity {
     private TextView publishDateView;
     private TextView fullTextView;
 
-    public static void start(@NonNull Activity activity, int position) {
+    public static void start(@NonNull Activity activity, int id) {
         Intent intent = new Intent(activity, NewsDetailsActivity.class);
-        intent.putExtra(KEY_TEXT, position);
+        intent.putExtra(KEY_TEXT, id);
         activity.startActivity(intent);
     }
 
@@ -43,6 +43,5 @@ public class NewsDetailsActivity extends AppCompatActivity {
         titleView.append(newsItems.getTitle());
         publishDateView.append(newsItems.getPublishDate().toString());
         fullTextView.append(newsItems.getFullText());
-
     }
 }

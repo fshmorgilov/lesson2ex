@@ -20,9 +20,9 @@ public class NewsDetailsActivity extends AppCompatActivity {
     private TextView publishDateView;
     private TextView fullTextView;
 
-    public static void start(@NonNull Activity activity, int id) {
+    public static void start(@NonNull Activity activity, NewsItem newsItem) {
         Intent intent = new Intent(activity, NewsDetailsActivity.class);
-        intent.putExtra(KEY_TEXT, id);
+        intent.putExtra(KEY_TEXT, newsItem);
         activity.startActivity(intent);
     }
 
@@ -30,8 +30,8 @@ public class NewsDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_details);
-        int position = Objects.requireNonNull(getIntent().getExtras()).getInt(KEY_TEXT);
-        NewsItem newsItems = DataUtils.generateNews().get(position);
+
+        NewsItem newsItems  = (NewsItem) getIntent().getSerializableExtra(KEY_TEXT);
         this.imageView = findViewById(R.id.image_nd);
         this.fullTextView = findViewById(R.id.full_text_nd);
         this.publishDateView = findViewById(R.id.publish_date_nd);

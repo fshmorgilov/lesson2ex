@@ -48,12 +48,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             Glide.with(photo.getContext()) //FIXME Переделать контекст
                     .load(newsItem.getImageUrl())
                     .into(photo);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemClickListener.onItemClick(newsItem);
-                }
-            });
+            view.setOnClickListener(v -> onItemClickListener.onItemClick(newsItem));
         }
     }
 

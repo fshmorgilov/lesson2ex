@@ -34,13 +34,10 @@ public class NewsFeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_feed);
         int orientation = this.getResources().getConfiguration().orientation;
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        adapter = new MyAdapter(DataUtils.generateNews(), new MyAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(NewsItem item) {
-                Log.e(LTAG, item.getTitle());
-                NewsDetailsActivity.start(NewsFeedActivity.this, DataUtils.generateNews().indexOf(item));
-            }
+        recyclerView = findViewById(R.id.recycler_view);
+        adapter = new MyAdapter(DataUtils.generateNews(), item -> {
+            Log.e(LTAG, item.getTitle());
+            NewsDetailsActivity.start(NewsFeedActivity.this, item);
         });
         decoration = new GridSpaceItemDecoration(4, 4);
 
@@ -51,7 +48,7 @@ public class NewsFeedActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(decoration);
+//        recyclerView.addItemDecoration(decoration);
         recyclerView.setHasFixedSize(true);
     }
 

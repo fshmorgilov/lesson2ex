@@ -14,8 +14,8 @@
     <dimen name="common_text_size_sw600dp">20sp</dimen>
     <dimen name="common_text_size">15sp</dimen>
     <dimen name="image_width_land">200dp</dimen>
-    <dimen name="card_view_margin">4dp</dimen>
     <dimen name="card_view_height">200dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="card_view_padding">6dp</dimen>
+    <dimen name="card_view_margin">8dp</dimen>
 </resources>

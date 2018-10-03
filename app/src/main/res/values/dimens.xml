@@ -17,4 +17,5 @@
     <dimen name="card_view_margin">4dp</dimen>
     <dimen name="card_view_height">200dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="card_view_padding">6dp</dimen>
 </resources>

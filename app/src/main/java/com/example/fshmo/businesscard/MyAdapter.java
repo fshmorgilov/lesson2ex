@@ -13,12 +13,15 @@ import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private List<NewsItem> dataset;
+    private OnItemClickListener onItemClickListener;
+    public interface OnItemClickListener{
+        void onItemClick(NewsItem item);
+    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
         private TextView categoryTextView;
         private TextView headerTextView;
         private TextView textTextView;
@@ -35,7 +38,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             photo = v.findViewById(R.id.photo);
         }
 
-        public void bind(NewsItem newsItem) {
+        public void bind(final NewsItem newsItem) {
             categoryTextView.setText(newsItem.getCategory().getName());
             headerTextView.setText(newsItem.getTitle());
             textTextView.setText(newsItem.getFullText());
@@ -46,8 +49,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
     }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(List<NewsItem> myDataset) {
+    public MyAdapter(List<NewsItem> myDataset, OnItemClickListener clickListener) {
         dataset = myDataset;
     }
 
@@ -55,7 +57,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     @Override
     public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
                                                      int viewType) {
-        // create a new view
         View v = (View) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_news, parent, false);
         return new MyViewHolder(v);

@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class NewsItem {
 
+
   private final String title;
   private final String imageUrl;
   private final Category category;

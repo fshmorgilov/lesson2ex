@@ -1,29 +1,48 @@
 package com.example.fshmo.businesscard;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+
+import java.util.Objects;
 
 public class NewsDetailsActivity extends AppCompatActivity {
+
+    private static final String KEY_TEXT = "KEY_TEXT";
+    private ImageView imageView;
+    private TextView titleView;
+    private TextView publishDateView;
+    private TextView fullTextView;
+
+    public static void start(@NonNull Activity activity, int position) {
+        Intent intent = new Intent(activity, NewsDetailsActivity.class);
+        intent.putExtra(KEY_TEXT, position);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_details);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        int position = Objects.requireNonNull(getIntent().getExtras()).getInt(KEY_TEXT);
+        NewsItem newsItems = DataUtils.generateNews().get(position);
+        this.imageView = findViewById(R.id.image_nd);
+        this.fullTextView = findViewById(R.id.full_text_nd);
+        this.publishDateView = findViewById(R.id.publish_date_nd);
+        this.titleView = findViewById(R.id.title_nd);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        Glide.with(this)
+                .load(newsItems.getImageUrl())
+                .into(imageView);
+        titleView.append(newsItems.getTitle());
+        publishDateView.append(newsItems.getPublishDate().toString());
+        fullTextView.append(newsItems.getFullText());
+
     }
-
 }

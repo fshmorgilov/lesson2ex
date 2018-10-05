@@ -44,4 +44,5 @@ public class NewsDetailsActivity extends AppCompatActivity {
         publishDateView.append(newsItems.getPublishDate().toString());
         fullTextView.append(newsItems.getFullText());
     }
+
 }

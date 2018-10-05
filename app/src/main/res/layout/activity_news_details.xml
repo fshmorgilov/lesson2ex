@@ -1,37 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/relative_nd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="@dimen/common_padding">
 
         <ImageView
             android:id="@+id/image_nd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true" />
+            android:layout_margin="@dimen/layout_margin"
+            android:layout_weight="3"
+            tools:src="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/title_nd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/image_nd" />
+            android:layout_margin="@dimen/layout_margin"
+            android:layout_weight="1"
+            tools:src="@tools:sample/full_names"
+            />
 
-        <TextView
-            android:id="@+id/publish_date_nd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/title_nd" />
 
         <TextView
             android:id="@+id/full_text_nd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/publish_date_nd" />
-    </RelativeLayout>
+            android:layout_margin="@dimen/layout_margin"
+            android:layout_weight="5" />
+
+        <TextView
+            android:id="@+id/publish_date_nd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/layout_margin"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:textAlignment="gravity"
+            android:textColor="#808080"
+            tools:src="@tools:sample/date/ddmmyy" />
+
+    </LinearLayout>
 
 </ScrollView>

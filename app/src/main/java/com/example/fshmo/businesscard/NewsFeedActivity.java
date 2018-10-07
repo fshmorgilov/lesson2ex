@@ -14,6 +14,9 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.RequestManager;
 import com.example.fshmo.businesscard.decorators.GridSpaceItemDecoration;
 
 import java.util.Objects;
@@ -34,11 +37,15 @@ public class NewsFeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_feed);
         int orientation = this.getResources().getConfiguration().orientation;
+        RequestManager glide = Glide.with(this);
         recyclerView = findViewById(R.id.recycler_view);
-        adapter = new MyAdapter(DataUtils.generateNews(), item -> {
-            Log.e(LTAG, item.getTitle());
-            NewsDetailsActivity.start(NewsFeedActivity.this, item);
-        });
+        adapter = new MyAdapter(
+                DataUtils.generateNews(),
+                glide,
+                item -> {
+                    Log.e(LTAG, item.getTitle());
+                    NewsDetailsActivity.start(NewsFeedActivity.this, item);
+                });
         decoration = new GridSpaceItemDecoration(4, 4);
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -52,7 +59,4 @@ public class NewsFeedActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
     }
 
-    public static float dpToPixels(@NonNull final Context context, final float sizeInDp) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sizeInDp, context.getResources().getDisplayMetrics());
-    }
 }

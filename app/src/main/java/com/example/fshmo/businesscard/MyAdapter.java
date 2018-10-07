@@ -1,5 +1,6 @@
 package com.example.fshmo.businesscard;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -16,7 +18,9 @@ import java.util.Locale;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private List<NewsItem> dataset;
     private OnItemClickListener onItemClickListener;
-    public interface OnItemClickListener{
+    private RequestManager glide;
+
+    public interface OnItemClickListener {
         void onItemClick(NewsItem item);
     }
 
@@ -42,27 +46,27 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             photo = v.findViewById(R.id.photo);
         }
 
-        public void bind(final NewsItem newsItem, OnItemClickListener onItemClickListener) {
+        public void bind(final NewsItem newsItem, RequestManager glide, OnItemClickListener onItemClickListener) {
             categoryTextView.setText(newsItem.getCategory().getName());
             headerTextView.setText(newsItem.getTitle());
             textTextView.setText(newsItem.getPreviewText());
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm, EEEE", Locale.ENGLISH);
             dateTextView.setText(sdf.format(newsItem.getPublishDate()));
-            Glide.with(photo.getContext()) //FIXME Переделать контекст
-                    .load(newsItem.getImageUrl())
-                    .into(photo);
+            glide.load(newsItem.getImageUrl()).into(photo);
             view.setOnClickListener(v -> onItemClickListener.onItemClick(newsItem));
         }
     }
 
-    public MyAdapter(List<NewsItem> myDataset, OnItemClickListener clickListener) {
-        dataset = myDataset;
+    public MyAdapter(List<NewsItem> newsItems, RequestManager glide, OnItemClickListener clickListener) {
+        this.glide = glide;
+        this.dataset = newsItems;
         this.onItemClickListener = clickListener;
     }
 
     // Create new views (invoked by the layout manager)
+    @NonNull
     @Override
-    public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent,
+    public MyAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                                      int viewType) {
         View v = (View) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_news, parent, false);
@@ -71,10 +75,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.bind(dataset.get(position), onItemClickListener);
+        holder.bind(dataset.get(position), glide, onItemClickListener);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

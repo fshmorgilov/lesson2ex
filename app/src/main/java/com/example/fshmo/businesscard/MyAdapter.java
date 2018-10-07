@@ -9,7 +9,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private List<NewsItem> dataset;
@@ -43,8 +45,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         public void bind(final NewsItem newsItem, OnItemClickListener onItemClickListener) {
             categoryTextView.setText(newsItem.getCategory().getName());
             headerTextView.setText(newsItem.getTitle());
-            textTextView.setText(newsItem.getFullText());
-            dateTextView.setText(newsItem.getPublishDate().toString());
+            textTextView.setText(newsItem.getPreviewText());
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm, EEEE", Locale.ENGLISH);
+            dateTextView.setText(sdf.format(newsItem.getPublishDate()));
             Glide.with(photo.getContext()) //FIXME Переделать контекст
                     .load(newsItem.getImageUrl())
                     .into(photo);

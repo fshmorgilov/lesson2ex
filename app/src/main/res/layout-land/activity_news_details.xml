@@ -1,31 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="@dimen/toolbar_height"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="#ffffff"
+        />
 
-
-        <ImageView
-            android:id="@+id/image_nd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/layout_margin"
-            android:layout_weight="3"
-            tools:src="@tools:sample/avatars" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/relative_nd"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_weight="4"
             android:orientation="vertical"
             android:padding="@dimen/common_padding">
 
+
+            <ImageView
+                android:id="@+id/image_nd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/layout_margin"
+                android:layout_weight="3"
+                tools:src="@tools:sample/avatars" />
 
             <TextView
                 android:id="@+id/title_nd"
@@ -33,11 +43,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/layout_margin"
                 android:layout_weight="1"
-                android:lines="2"
+                android:lines="3"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 tools:src="@tools:sample/full_names" />
-
 
             <TextView
                 android:id="@+id/full_text_nd"
@@ -55,11 +64,10 @@
                 android:fontFamily="@font/vintage"
                 android:gravity="end"
                 android:textAlignment="gravity"
-                android:textColor="#808080"
+                android:textColor="@color/date_text_color"
                 tools:src="@tools:sample/date/ddmmyy" />
 
         </LinearLayout>
-    </LinearLayout>
 
-
-</ScrollView>
+    </ScrollView>
+</LinearLayout>

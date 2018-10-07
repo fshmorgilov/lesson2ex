@@ -39,16 +39,11 @@ public class MainActivity extends AppCompatActivity {
         final EditText sendMail = findViewById(R.id.send_mail);
         final String text = sendMail.getText().toString().trim();
         sendMail.setOnEditorActionListener((v, actionId, event) -> {
-            if(actionId == EditorInfo.IME_ACTION_SEND){
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
                 composeEmail(addresses, "Nice to meet you!", text);
             }
             return false;
         });
-
-
-        //TODO Tablet mode
-        //TODO TV mode
-
     }
 
     public void openWebPage(String url) {
@@ -74,13 +69,12 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(Intent.EXTRA_EMAIL, addresses);
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, body);
-        Log.i(LTAG,"Composing email. \n Subject: " + subject + "\n Body : " + body);
+        Log.i(LTAG, "Composing email. \n Subject: " + subject + "\n Body : " + body);
         final String errorMessage = "No email app";
         if (intent.resolveActivity(getPackageManager()) != null) {
             Log.i(LTAG, "Composed");
             startActivity(intent);
-        }
-        else {
+        } else {
             Log.i(LTAG, errorMessage);
             showToast(errorMessage);
         }

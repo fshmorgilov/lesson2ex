@@ -1,25 +1,16 @@
 package com.example.fshmo.businesscard;
 
-import android.content.Context;
 import android.content.res.Configuration;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Display;
-import android.view.Surface;
-import android.view.WindowManager;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.RequestManager;
 import com.example.fshmo.businesscard.decorators.GridSpaceItemDecoration;
-
-import java.util.Objects;
 
 public class NewsFeedActivity extends AppCompatActivity {
 

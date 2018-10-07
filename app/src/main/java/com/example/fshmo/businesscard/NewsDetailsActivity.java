@@ -5,16 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.support.v7.widget.Toolbar;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.Objects;
 
 public class NewsDetailsActivity extends AppCompatActivity {
 
@@ -38,7 +36,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_details);
 
 
-        NewsItem newsItem  = (NewsItem) getIntent().getSerializableExtra(KEY_TEXT);
+        NewsItem newsItem = (NewsItem) getIntent().getSerializableExtra(KEY_TEXT);
         this.imageView = findViewById(R.id.image_nd);
         this.fullTextView = findViewById(R.id.full_text_nd);
         this.publishDateView = findViewById(R.id.publish_date_nd);

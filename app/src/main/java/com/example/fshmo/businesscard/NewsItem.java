@@ -1,6 +1,5 @@
 package com.example.fshmo.businesscard;
 
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
 import java.io.Serializable;

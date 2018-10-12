@@ -18,7 +18,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private RequestManager glide;
 
     public interface OnItemClickListener {
-        void onItemClick(NewsItem item);
+        void onItemClick(@NonNull NewsItem item);
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -50,7 +50,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
     }
 
-    public MyAdapter(List<NewsItem> newsItems, RequestManager glide, OnItemClickListener clickListener) {
+    public MyAdapter(@NonNull List<NewsItem> newsItems,
+                     @NonNull RequestManager glide, OnItemClickListener clickListener) {
         this.glide = glide;
         this.dataset = newsItems;
         this.onItemClickListener = clickListener;

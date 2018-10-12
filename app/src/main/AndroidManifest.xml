@@ -14,7 +14,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".MainActivity"
+            android:name=".AboutActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity android:name=".NewsFeedActivity">
             <intent-filter>

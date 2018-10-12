@@ -20,9 +20,6 @@ public class NewsFeedActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.ItemDecoration decoration;
 
-    //    WindowManager wn = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-//    private Display display = getWindowManager().getDefaultDisplay();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +43,6 @@ public class NewsFeedActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-//        recyclerView.addItemDecoration(decoration);
         recyclerView.setHasFixedSize(true);
     }
 

@@ -11,12 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.Arrays;
-import java.util.List;
+public class AboutActivity extends AppCompatActivity {
 
-public class MainActivity extends AppCompatActivity {
-
-    private static final String LTAG = MainActivity.class.getName();
+    private static final String LTAG = AboutActivity.class.getName();
     private final String[] addresses = new String[]{"fshmorgilov@gmail.com"};
 
     @Override
@@ -60,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showToast(String s) {
-        Toast.makeText(MainActivity.this, s, Toast.LENGTH_LONG).show();
+        Toast.makeText(AboutActivity.this, s, Toast.LENGTH_LONG).show();
     }
 
     private void composeEmail(String[] addresses, @NonNull final String subject, @NonNull final String body) {

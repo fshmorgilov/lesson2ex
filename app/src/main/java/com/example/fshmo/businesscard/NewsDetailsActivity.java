@@ -8,7 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
+
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -20,19 +22,19 @@ public class NewsDetailsActivity extends AppCompatActivity {
     private TextView publishDateView;
     private TextView fullTextView;
     private Toolbar toolbar;
+    private final String DATE_FORMAT = "HH:MM, EEEE, dd MMMM, yyyy";
 
-
-    public static void start(@NonNull Activity activity, NewsItem newsItem) {
+    public static void start(@NonNull Activity activity,
+                             @NonNull NewsItem newsItem) {
         Intent intent = new Intent(activity, NewsDetailsActivity.class);
         intent.putExtra(KEY_TEXT, newsItem);
         activity.startActivity(intent);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@NonNull Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_details);
-
 
         NewsItem newsItem = (NewsItem) getIntent().getSerializableExtra(KEY_TEXT);
         this.imageView = findViewById(R.id.image_nd);
@@ -41,6 +43,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
         this.titleView = findViewById(R.id.title_nd);
         this.toolbar = findViewById(R.id.my_toolbar);
         this.toolbar.setTitle(newsItem.getCategory().getName());
+
         setSupportActionBar(this.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_toolbar_back);
         toolbar.setNavigationOnClickListener(v -> finish());
@@ -50,9 +53,8 @@ public class NewsDetailsActivity extends AppCompatActivity {
                 .into(imageView);
         titleView.append(newsItem.getTitle());
 
-        publishDateView.append(new SimpleDateFormat("HH:MM, EEEE, dd MMMM, yyyy", Locale.ENGLISH)
+        publishDateView.append(new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH)
                 .format(newsItem.getPublishDate()));
         fullTextView.append(newsItem.getFullText());
     }
-
 }

@@ -27,7 +27,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         int orientation = this.getResources().getConfiguration().orientation;
         RequestManager glide = Glide.with(this);
         recyclerView = findViewById(R.id.recycler_view);
-        adapter = new MyAdapter(
+        adapter = new NewsFeedAdapter(
                 DataUtils.generateNews(),
                 glide,
                 item -> {

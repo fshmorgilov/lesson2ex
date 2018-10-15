@@ -31,11 +31,12 @@ public class NewsFeedActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private static final String LTAG = NewsFeedActivity.class.getCanonicalName();
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    private NewsFeedAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.ItemDecoration decoration;
     private List<NewsItem> newsItems = new ArrayList<>();
     private int progressBarProgress = 0;
+    private Disposable observable_closed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,6 @@ public class NewsFeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_feed);
         int orientation = this.getResources().getConfiguration().orientation;
         RequestManager glide = Glide.with(this);
-        getStarredNews();
         progressBar = findViewById(R.id.progress_bar);
         progressBar.setProgress(0);
         recyclerView = findViewById(R.id.recycler_view);
@@ -64,31 +64,30 @@ public class NewsFeedActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
+        getStarredNews();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         progressBarProgress = 0;
+        observable_closed.dispose();
     }
 
     private void getStarredNews() {
-        Disposable observable_closed = Observable
-                .create(emitter -> {
-                    for (NewsItem newsItem : DataUtils.generateNews()) {
-                        progressBarProgress = progressBarProgress +20;
-                        if(progressBarProgress >100) progressBarProgress = 100;
-                        progressBar.setProgress(progressBarProgress);
-                        TimeUnit.SECONDS.sleep(2);
-                        emitter.onNext((NewsItem)newsItem);
-                        emitter.onComplete();
-                    }
-                })
-//                .timeInterval(TimeUnit.SECONDS, Schedulers.io())
+        Observable<? extends Long> timer = Observable.interval(2, TimeUnit.SECONDS);
+        observable_closed = Observable.zip(timer,
+                Observable
+                        .fromIterable(DataUtils.generateNews()),
+                (o, newsItem) -> newsItem)
                 .doOnNext(item -> Log.e(LTAG, Thread.currentThread().getName()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
-        observable_closed.dispose();
+                .subscribe(newsItem -> {
+                    adapter.addItem(newsItem);
+                    progressBarProgress = progressBarProgress + 20;
+                    if (progressBarProgress > 100) progressBarProgress = 100;
+                    progressBar.setProgress(progressBarProgress);
+                });
     }
 }

@@ -52,4 +52,9 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder> {
         dataset.clear();
         this.dataset.addAll(dataset);
     }
+
+    public void addItem(@NonNull NewsItem item){
+        this.dataset.add(item);
+        notifyItemInserted(dataset.indexOf(item));
+    }
 }

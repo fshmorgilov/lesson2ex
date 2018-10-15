@@ -6,7 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -41,7 +44,6 @@ public class NewsFeedActivity extends AppCompatActivity {
         int orientation = this.getResources().getConfiguration().orientation;
         RequestManager glide = Glide.with(this);
         progressBar = findViewById(R.id.progress_bar);
-        progressBar.setProgress(0);
         recyclerView = findViewById(R.id.recycler_view);
         adapter = new NewsFeedAdapter(
                 newsItems,
@@ -71,20 +73,15 @@ public class NewsFeedActivity extends AppCompatActivity {
     }
 
     private void getStarredNews() {
-        Observable<? extends Long> timer = Observable.interval(2, TimeUnit.SECONDS);
-        observable_closed = Observable.zip(
-                timer,
-                Observable
-                        .fromIterable(DataUtils.generateNews()),
-                (o, newsItem) -> newsItem)
-                .doOnNext(item -> Log.e(LTAG, Thread.currentThread().getName()))
+        observable_closed = Single.just(DataUtils.generateNews())
+                .delay(2, TimeUnit.SECONDS)
+                .doOnSuccess(newsItems1 -> Log.i(LTAG, String.valueOf(newsItems1.size())))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(disposable -> progressBar.setVisibility(View.VISIBLE))
                 .subscribe(newsItem -> {
-                    adapter.addItem(newsItem);
-                    progressBarProgress = progressBarProgress + 20;
-                    if (progressBarProgress > 100) progressBarProgress = 100;
-                    progressBar.setProgress(progressBarProgress);
+                    progressBar.setVisibility(View.GONE);
+                    adapter.addItems(newsItem);
                 });
     }
 }

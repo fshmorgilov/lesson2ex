@@ -15,6 +15,12 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder> {
     private OnItemClickListener onItemClickListener;
     private RequestManager glide;
 
+    public void addItems(List<NewsItem> newsItem) {
+        int startPosition = dataset.size();
+       dataset.addAll(newsItem);
+        notifyItemRangeInserted(startPosition, newsItem.size());
+    }
+
     public interface OnItemClickListener {
         void onItemClick(@NonNull NewsItem item);
     }
@@ -46,14 +52,14 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder> {
     }
 
     public void setDataset(List<NewsItem> dataset) {
-        if (dataset == null){
+        if (dataset == null) {
             return;
         }
         dataset.clear();
         this.dataset.addAll(dataset);
     }
 
-    public void addItem(@NonNull NewsItem item){
+    public void addItem(@NonNull NewsItem item) {
         this.dataset.add(item);
         notifyItemInserted(dataset.indexOf(item));
     }

@@ -7,10 +7,11 @@
     tools:context=".NewsFeedActivity">
     <ProgressBar
         android:id="@+id/progress_bar"
-        style ="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="100"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        tools:visibility="visible"
         />
 
     <android.support.v7.widget.RecyclerView

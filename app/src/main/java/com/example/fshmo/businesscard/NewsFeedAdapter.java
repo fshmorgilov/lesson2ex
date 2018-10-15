@@ -44,4 +44,12 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder> {
     public int getItemCount() {
         return dataset.size();
     }
+
+    public void setDataset(List<NewsItem> dataset) {
+        if (dataset == null){
+            return;
+        }
+        dataset.clear();
+        this.dataset.addAll(dataset);
+    }
 }

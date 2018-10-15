@@ -72,10 +72,8 @@ public class NewsFeedActivity extends AppCompatActivity {
 
     private void getStarredNews() {
         Observable<? extends Long> timer = Observable.interval(2, TimeUnit.SECONDS);
-        observable_closed = Observable.zip(
-                timer,
-                Observable
-                        .fromIterable(DataUtils.generateNews()),
+        observable_closed = Observable.zip(timer,
+                Observable.fromIterable(DataUtils.generateNews()),
                 (o, newsItem) -> newsItem)
                 .doOnNext(item -> Log.e(LTAG, Thread.currentThread().getName()))
                 .subscribeOn(Schedulers.io())

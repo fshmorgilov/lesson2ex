@@ -2,7 +2,6 @@ package com.example.fshmo.businesscard;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,14 +13,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.example.fshmo.businesscard.decorators.GridSpaceItemDecoration;
 
-import org.reactivestreams.Subscription;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -76,7 +72,8 @@ public class NewsFeedActivity extends AppCompatActivity {
 
     private void getStarredNews() {
         Observable<? extends Long> timer = Observable.interval(2, TimeUnit.SECONDS);
-        observable_closed = Observable.zip(timer,
+        observable_closed = Observable.zip(
+                timer,
                 Observable
                         .fromIterable(DataUtils.generateNews()),
                 (o, newsItem) -> newsItem)

@@ -7,10 +7,14 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.example.fshmo.businesscard.data.DataCache;
+import com.example.fshmo.businesscard.data.DataUtils;
+import com.example.fshmo.businesscard.data.exceptions.CacheIsEmptyException;
 import com.example.fshmo.businesscard.decorators.GridSpaceItemDecoration;
 
 import java.util.ArrayList;
@@ -41,7 +45,21 @@ public class NewsFeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_feed);
         initializeViews();
         configuresViews();
-        fillViews();
+        try {
+            this.newsItems.addAll(DataCache.getNewsCache());
+        } catch (CacheIsEmptyException e) {
+            fillViews();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        try {
+            this.newsItems.addAll(DataCache.getNewsCache());
+        } catch (CacheIsEmptyException e) {
+            fillViews();
+        }
+        super.onResume();
     }
 
     @Override
@@ -51,6 +69,7 @@ public class NewsFeedActivity extends AppCompatActivity {
             disposable.dispose();
         else throw new UnsupportedOperationException();
         //todo а что делать если нет? Закачивать что осталось в базу?
+        DataCache.invalidateNewsCache();
         super.onDestroy();
     }
 
@@ -86,6 +105,7 @@ public class NewsFeedActivity extends AppCompatActivity {
 
     private void fillViews() {
         Log.i(LTAG, "Filling News");
+        int progressStep = 100 / (DataUtils.generateNews().size());
         Observable<? extends Long> disposableTimer =
                 Observable.interval(2, TimeUnit.SECONDS);
         disposable =
@@ -95,13 +115,17 @@ public class NewsFeedActivity extends AppCompatActivity {
                         (o, newsItem) -> newsItem
                 )
                         .doOnNext(item -> Log.e(LTAG, Thread.currentThread().getName()))
+                        .doOnNext(DataCache::addToNewsCache)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(newsItem -> {
                             adapter.addItem(newsItem);
-                            progressBarProgress = progressBarProgress + 20;
-                            if (progressBarProgress > 100) progressBarProgress = 100;
+                            progressBarProgress = progressBarProgress + progressStep;
+                            if (progressBarProgress > 100) {
+                                progressBar.setVisibility(View.GONE);
+                            }
                             progressBar.setProgress(progressBarProgress);
+
                         });
         Log.i(LTAG, "Filling News done");
     }

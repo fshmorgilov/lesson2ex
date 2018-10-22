@@ -45,14 +45,6 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder> {
         return dataset.size();
     }
 
-    public void setDataset(List<NewsItem> dataset) {
-        if (dataset == null){
-            return;
-        }
-        dataset.clear();
-        this.dataset.addAll(dataset);
-    }
-
     public void addItem(@NonNull NewsItem item){
         this.dataset.add(item);
         notifyItemInserted(dataset.indexOf(item));

@@ -32,13 +32,31 @@ public class NewsFeedActivity extends AppCompatActivity {
     private RecyclerView.ItemDecoration decoration;
     private List<NewsItem> newsItems = new ArrayList<>();
     private int progressBarProgress = 0;
-    private Disposable observable_closed;
+    private int orientation;
+    private Disposable disposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_feed);
-        int orientation = this.getResources().getConfiguration().orientation;
+        initializeViews();
+        configuresViews();
+        fillViews();
+    }
+
+    @Override
+    protected void onDestroy() {
+        progressBarProgress = 0;
+        if (disposable != null && !disposable.isDisposed())
+            disposable.dispose();
+        else throw new UnsupportedOperationException();
+        //todo а что делать если нет? Закачивать что осталось в базу?
+        super.onDestroy();
+    }
+
+    private void initializeViews() {
+        Log.i(LTAG, "Initializing...");
+        orientation = this.getResources().getConfiguration().orientation;
         RequestManager glide = Glide.with(this);
         progressBar = findViewById(R.id.progress_bar);
         progressBar.setProgress(0);
@@ -51,38 +69,40 @@ public class NewsFeedActivity extends AppCompatActivity {
                     NewsDetailsActivity.start(NewsFeedActivity.this, item);
                 });
         decoration = new GridSpaceItemDecoration(4, 4);
+        Log.i(LTAG, "Initializing done");
+    }
 
+    private void configuresViews() {
+        Log.i(LTAG, "Configuring...");
+        recyclerView.setHasFixedSize(true);
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             layoutManager = new LinearLayoutManager(this);
         } else
             layoutManager = new GridLayoutManager(this, 2);
-
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
-        getStarredNews();
+        Log.i(LTAG, "Configuring done");
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        progressBarProgress = 0;
-        observable_closed.dispose();
-    }
-
-    private void getStarredNews() {
-        Observable<? extends Long> timer = Observable.interval(2, TimeUnit.SECONDS);
-        observable_closed = Observable.zip(timer,
-                Observable.fromIterable(DataUtils.generateNews()),
-                (o, newsItem) -> newsItem)
-                .doOnNext(item -> Log.e(LTAG, Thread.currentThread().getName()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(newsItem -> {
-                    adapter.addItem(newsItem);
-                    progressBarProgress = progressBarProgress + 20;
-                    if (progressBarProgress > 100) progressBarProgress = 100;
-                    progressBar.setProgress(progressBarProgress);
-                });
+    private void fillViews() {
+        Log.i(LTAG, "Filling News");
+        Observable<? extends Long> disposableTimer =
+                Observable.interval(2, TimeUnit.SECONDS);
+        disposable =
+                Observable.zip(
+                        disposableTimer,
+                        Observable.fromIterable(DataUtils.generateNews()),
+                        (o, newsItem) -> newsItem
+                )
+                        .doOnNext(item -> Log.e(LTAG, Thread.currentThread().getName()))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(newsItem -> {
+                            adapter.addItem(newsItem);
+                            progressBarProgress = progressBarProgress + 20;
+                            if (progressBarProgress > 100) progressBarProgress = 100;
+                            progressBar.setProgress(progressBarProgress);
+                        });
+        Log.i(LTAG, "Filling News done");
     }
 }

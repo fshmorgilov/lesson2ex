@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".NewsFeedActivity">
+
     <ProgressBar
         android:id="@+id/progress_bar"
-        style ="?android:attr/progressBarStyleHorizontal"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="100"
-        />
+        android:max="100" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:padding="8dp"
+        android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:layout_height="match_parent" />
+        android:padding="8dp" />
 </FrameLayout>

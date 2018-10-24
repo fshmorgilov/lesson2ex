@@ -6,4 +6,5 @@
     <color name="text_view_background">#99C24D</color>
     <color name="general_background">#2F2D2E</color>
     <color name="general_white">#FFFFFF</color>
+    <color name="date_text_color">#808080</color>
 </resources>

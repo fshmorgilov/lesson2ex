@@ -1,0 +1,30 @@
+package com.example.fshmo.businesscard.web;
+
+public enum NewsTypes {
+    HOME,
+    OPINION,
+    WORLD,
+    NATIONAL,
+    POLITICS,
+    UPSHOT,
+    NYREGION,
+    BUSINESS,
+    TECHNOLOGY,
+    SCIENCE,
+    HEALTH,
+    SPORTS,
+    ARTS,
+    BOOKS,
+    MOVIES,
+    THEATER,
+    SUNDAYREVIEW,
+    FASHION,
+    TMAGAZINE,
+    FOOD,
+    TRAVEL,
+    MAGAZINE,
+    REALESTATE,
+    AUTOMOBILES,
+    OBITUARIES,
+    INSIDER
+}

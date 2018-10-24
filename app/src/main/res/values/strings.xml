@@ -7,4 +7,5 @@
     <string name="content_descr_worked_logo">company i worker for</string>
     <string name="main_photo_descr">Main photo</string>
     <string name="title_activity_news_details">NewsDetailsActivity</string>
+    <string name="ny_api_key">258d5b758edc4dce91a904e111f29f41</string>
 </resources>

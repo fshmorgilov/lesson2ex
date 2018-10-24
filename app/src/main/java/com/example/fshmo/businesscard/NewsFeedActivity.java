@@ -53,22 +53,10 @@ public class NewsFeedActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        try {
-            this.newsItems.addAll(DataCache.getNewsCache());
-        } catch (CacheIsEmptyException e) {
-            fillViews();
-        }
-        super.onResume();
-    }
-
-    @Override
     protected void onDestroy() {
         progressBarProgress = 0;
-        if (disposable != null && !disposable.isDisposed())
+        if (disposable != null)
             disposable.dispose();
-        else throw new UnsupportedOperationException();
-        //todo а что делать если нет? Закачивать что осталось в базу?
         DataCache.invalidateNewsCache();
         super.onDestroy();
     }
@@ -115,18 +103,21 @@ public class NewsFeedActivity extends AppCompatActivity {
                         (o, newsItem) -> newsItem
                 )
                         .doOnNext(item -> Log.e(LTAG, Thread.currentThread().getName()))
-                        .doOnNext(DataCache::addToNewsCache)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(newsItem -> {
-                            adapter.addItem(newsItem);
-                            progressBarProgress = progressBarProgress + progressStep;
-                            if (progressBarProgress > 100) {
-                                progressBar.setVisibility(View.GONE);
-                            }
-                            progressBar.setProgress(progressBarProgress);
-
-                        });
+                        .subscribe(
+                                (newsItem) -> {
+                                    adapter.addItem(newsItem);
+                                    progressBarProgress = progressBarProgress + progressStep;
+                                    progressBar.setProgress(progressBarProgress);
+                                },
+                                (err) -> Log.e(LTAG, err.getMessage()),
+                                () -> {
+                                    for (NewsItem newsItem : this.newsItems) {
+                                        DataCache.addToNewsCache(newsItem);
+                                    }
+                                    this.progressBar.setVisibility(View.GONE);
+                                });
         Log.i(LTAG, "Filling News done");
     }
 }

@@ -67,6 +67,5 @@
                 tools:src="@tools:sample/date/ddmmyy" />
 
         </LinearLayout>
-
     </ScrollView>
 </LinearLayout>

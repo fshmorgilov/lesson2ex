@@ -1,4 +1,4 @@
-package com.example.fshmo.businesscard.web.topstories;
+package com.example.fshmo.businesscard.web.topstories.dto;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -4,6 +4,8 @@ package com.example.fshmo.businesscard.web.topstories;
 import android.support.annotation.NonNull;
 
 import com.example.fshmo.businesscard.web.NewsTypes;
+import com.example.fshmo.businesscard.web.topstories.interceptors.ApiKeyInterceptor;
+import com.example.fshmo.businesscard.web.topstories.interceptors.CategoryInterceptor;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +27,7 @@ public final class TopStoriesApi {
 
     private static TopStoriesApi api;
 
-    private static synchronized TopStoriesApi getInstance(NewsTypes newsType) {
+    public static synchronized TopStoriesApi getInstance(NewsTypes newsType) {
         if (api == null) {
             api = new TopStoriesApi();
         }

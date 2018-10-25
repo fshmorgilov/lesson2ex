@@ -1,10 +1,11 @@
-package com.example.fshmo.businesscard.web.topstories;
+package com.example.fshmo.businesscard.web.topstories.dto;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.net.URL;
 
-class MultimediaDTO {
+public class MultimediaDTO {
+
     @SerializedName("url")
     private URL url;
     @SerializedName("caption")
@@ -12,8 +13,8 @@ class MultimediaDTO {
     @SerializedName("copyright")
     private String copyright;
 
-    public URL getUrl() {
-        return url;
+    public String getUrl() {
+        return url.toString();
     }
 
     public String getCaption() {

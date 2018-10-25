@@ -1,4 +1,4 @@
-package com.example.fshmo.businesscard.web.topstories;
+package com.example.fshmo.businesscard.web.topstories.interceptors;
 
 import java.io.IOException;
 

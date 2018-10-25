@@ -16,6 +16,10 @@ import com.example.fshmo.businesscard.data.DataCache;
 import com.example.fshmo.businesscard.data.DataUtils;
 import com.example.fshmo.businesscard.data.exceptions.CacheIsEmptyException;
 import com.example.fshmo.businesscard.decorators.GridSpaceItemDecoration;
+import com.example.fshmo.businesscard.web.NewsTypes;
+import com.example.fshmo.businesscard.web.topstories.dto.ResponseDTO;
+import com.example.fshmo.businesscard.web.topstories.dto.ResultsDTO;
+import com.example.fshmo.businesscard.web.topstories.TopStoriesApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,12 +101,9 @@ public class NewsFeedActivity extends AppCompatActivity {
         Observable<? extends Long> disposableTimer =
                 Observable.interval(2, TimeUnit.SECONDS);
         disposable =
-                Observable.zip(
-                        disposableTimer,
-                        Observable.fromIterable(DataUtils.generateNews()),
-                        (o, newsItem) -> newsItem
-                )
-                        .doOnNext(item -> Log.e(LTAG, Thread.currentThread().getName()))
+                TopStoriesApi.getInstance(NewsTypes.ARTS)
+                        .topStories().get()
+                        .flatMapObservable(this::makeNewsItem)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -111,13 +112,41 @@ public class NewsFeedActivity extends AppCompatActivity {
                                     progressBarProgress = progressBarProgress + progressStep;
                                     progressBar.setProgress(progressBarProgress);
                                 },
-                                (err) -> Log.e(LTAG, err.getMessage()),
-                                () -> {
-                                    for (NewsItem newsItem : this.newsItems) {
-                                        DataCache.addToNewsCache(newsItem);
-                                    }
-                                    this.progressBar.setVisibility(View.GONE);
-                                });
+                                this::logItemError,
+                                this::cacheAndComplete
+                                );
         Log.i(LTAG, "Filling News done");
+    }
+
+    private Observable<NewsItem> makeNewsItem(ResponseDTO responseDTO) {
+        List<NewsItem> newsItems = new ArrayList<>();
+        for (ResultsDTO result : responseDTO.getResults()) {
+            String url;
+            if (result.getMultimedia().isEmpty())
+                url = null;
+            else
+                url = result.getMultimedia().get(0).getUrl();
+            NewsItem newsItem = new NewsItem(
+                    result.getTitle(),
+                    url,
+                    new Category(5, result.getSection()),//fixme
+                    result.getDatePublished(),
+                    result.getShortDescription(),//fixme
+                    result.getShortDescription()//fixme
+            );
+            newsItems.add(newsItem);
+        }
+        return Observable.fromIterable(newsItems);
+    }
+
+    private void logItemError(Throwable err){
+        Log.e(LTAG, err.getMessage());
+    }
+
+    private void cacheAndComplete(){
+        for (NewsItem newsItem : this.newsItems) {
+            DataCache.addToNewsCache(newsItem);
+        }
+        this.progressBar.setVisibility(View.GONE);
     }
 }

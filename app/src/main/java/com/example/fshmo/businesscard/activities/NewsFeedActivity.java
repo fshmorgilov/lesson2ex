@@ -1,4 +1,4 @@
-package com.example.fshmo.businesscard;
+package com.example.fshmo.businesscard.activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -12,18 +12,19 @@ import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.example.fshmo.businesscard.Category;
+import com.example.fshmo.businesscard.NewsItem;
+import com.example.fshmo.businesscard.R;
+import com.example.fshmo.businesscard.activities.decorators.GridSpaceItemDecoration;
 import com.example.fshmo.businesscard.data.DataCache;
 import com.example.fshmo.businesscard.data.DataUtils;
-import com.example.fshmo.businesscard.data.exceptions.CacheIsEmptyException;
-import com.example.fshmo.businesscard.decorators.GridSpaceItemDecoration;
 import com.example.fshmo.businesscard.web.NewsTypes;
+import com.example.fshmo.businesscard.web.topstories.TopStoriesApi;
 import com.example.fshmo.businesscard.web.topstories.dto.ResponseDTO;
 import com.example.fshmo.businesscard.web.topstories.dto.ResultsDTO;
-import com.example.fshmo.businesscard.web.topstories.TopStoriesApi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -49,11 +50,11 @@ public class NewsFeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_feed);
         initializeViews();
         configuresViews();
-        try {
-            this.newsItems.addAll(DataCache.getNewsCache());
-        } catch (CacheIsEmptyException e) {
+//        try {
+//            this.newsItems.addAll(DataCache.getNewsCache());
+//        } catch (CacheIsEmptyException e) {
             fillViews();
-        }
+//        }
     }
 
     @Override
@@ -98,11 +99,9 @@ public class NewsFeedActivity extends AppCompatActivity {
     private void fillViews() {
         Log.i(LTAG, "Filling News");
         int progressStep = 100 / (DataUtils.generateNews().size());
-        Observable<? extends Long> disposableTimer =
-                Observable.interval(2, TimeUnit.SECONDS);
         disposable =
-                TopStoriesApi.getInstance(NewsTypes.ARTS)
-                        .topStories().get()
+                TopStoriesApi.getInstance(NewsTypes.arts)
+                        .topStories().get(NewsTypes.arts)
                         .flatMapObservable(this::makeNewsItem)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

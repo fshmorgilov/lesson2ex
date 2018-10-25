@@ -1,4 +1,4 @@
-package com.example.fshmo.businesscard.decorators;
+package com.example.fshmo.businesscard.activities.decorators;
 
 import android.graphics.Rect;
 import android.support.annotation.NonNull;

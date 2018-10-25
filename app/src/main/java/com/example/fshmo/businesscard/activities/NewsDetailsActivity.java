@@ -1,4 +1,4 @@
-package com.example.fshmo.businesscard;
+package com.example.fshmo.businesscard.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.fshmo.businesscard.NewsItem;
+import com.example.fshmo.businesscard.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;

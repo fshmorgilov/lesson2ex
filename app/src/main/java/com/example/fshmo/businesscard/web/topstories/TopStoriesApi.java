@@ -13,6 +13,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public final class TopStoriesApi {
 
@@ -48,6 +49,7 @@ public final class TopStoriesApi {
     private Retrofit buildRetrofit() {
         return new Retrofit.Builder()
                 .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
@@ -62,7 +64,7 @@ public final class TopStoriesApi {
 
         return new OkHttpClient.Builder()
                 .addInterceptor(networkLoggingInterceptor)
-                .addInterceptor(categoryInterceptor)
+//                .addInterceptor(categoryInterceptor)
                 .addInterceptor(apiKeyInterceptor)
                 .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)

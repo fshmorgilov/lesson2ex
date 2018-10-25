@@ -1,4 +1,4 @@
-package com.example.fshmo.businesscard;
+package com.example.fshmo.businesscard.activities;
 
 
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.RequestManager;
+import com.example.fshmo.businesscard.NewsItem;
+import com.example.fshmo.businesscard.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;

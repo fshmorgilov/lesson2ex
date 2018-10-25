@@ -13,7 +13,7 @@ public enum NewsTypes {
     SCIENCE,
     HEALTH,
     SPORTS,
-    ARTS,
+    arts,
     BOOKS,
     MOVIES,
     THEATER,

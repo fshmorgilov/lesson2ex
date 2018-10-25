@@ -11,4 +11,16 @@ class MultimediaDTO {
     private String caption;
     @SerializedName("copyright")
     private String copyright;
+
+    public URL getUrl() {
+        return url;
+    }
+
+    public String getCaption() {
+        return caption;
+    }
+
+    public String getCopyright() {
+        return copyright;
+    }
 }

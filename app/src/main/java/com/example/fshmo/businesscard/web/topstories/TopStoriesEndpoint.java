@@ -7,6 +7,6 @@ import retrofit2.http.Query;
 public interface TopStoriesEndpoint {
 
     @GET()
-    Single<ResponseDTO> search(@Query("api_key") String apiKey,
+    Single<ResponseDTO> get(@Query("api_key") String apiKey,
                                @Query("q") String search);
 }

@@ -13,4 +13,17 @@ public class ResponseDTO {
     private int resultCnt;
     @SerializedName("results")
     private List<ResultsDTO> results;
+
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public int getResultCnt() {
+        return resultCnt;
+    }
+
+    public List<ResultsDTO> getResults() {
+        return results;
+    }
 }

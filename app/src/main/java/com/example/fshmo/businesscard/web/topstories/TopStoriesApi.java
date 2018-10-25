@@ -3,7 +3,7 @@ package com.example.fshmo.businesscard.web.topstories;
 
 import android.support.annotation.NonNull;
 
-import com.example.fshmo.businesscard.R;
+import com.example.fshmo.businesscard.web.NewsTypes;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,22 +14,33 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 public final class TopStoriesApi {
 
-    private static final String url = ""; //fixme
+    private static final String url = "http://api.nytimes.com/svc/topstories/v2/";
     private static final String API_KEY = "258d5b758edc4dce91a904e111f29f41";
+
     private static final int TIMEOUT_SECONDS = 2;
-    private static OkHttpClient client;
+
+    private final TopStoriesEndpoint endpoint;
+    private final OkHttpClient client;
+    private NewsTypes newsType;
 
     private static TopStoriesApi api;
 
-    private static synchronized TopStoriesApi getInstance() {
+    private static synchronized TopStoriesApi getInstance(NewsTypes newsType) {
         if (api == null) {
             api = new TopStoriesApi();
         }
+        api.setNewsType(newsType);
         return api;
     }
 
-    public TopStoriesApi() {
+    private TopStoriesApi() {
+        final Retrofit retrofit;
+        client = buildOkHttpClient();
+        retrofit = buildRetrofit();
+
+        endpoint = retrofit.create(TopStoriesEndpoint.class);
     }
+
 
     @NonNull
     private Retrofit buildRetrofit() {
@@ -38,19 +49,30 @@ public final class TopStoriesApi {
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
-        //TODO
     }
 
     @NonNull
     private OkHttpClient buildOkHttpClient() {
         final HttpLoggingInterceptor networkLoggingInterceptor = new HttpLoggingInterceptor();
         networkLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        final ApiKeyInterceptor apiKeyInterceptor = new ApiKeyInterceptor(API_KEY);
+        final CategoryInterceptor categoryInterceptor = new CategoryInterceptor(newsType);
 
         return new OkHttpClient.Builder()
                 .addInterceptor(networkLoggingInterceptor)
+                .addInterceptor(categoryInterceptor)
+                .addInterceptor(apiKeyInterceptor)
                 .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .build();
+    }
+
+    public TopStoriesEndpoint topStories() {
+        return endpoint;
+    }
+
+    private void setNewsType(NewsTypes newsType) {
+        this.newsType = newsType;
     }
 }

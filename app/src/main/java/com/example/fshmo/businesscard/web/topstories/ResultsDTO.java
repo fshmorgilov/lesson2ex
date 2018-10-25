@@ -15,5 +15,25 @@ public class ResultsDTO {
     @SerializedName("published_date")
     private Date datePublished;
     @SerializedName("multimedia")
-    private MultimediaDTO multimedia;
+    private List<MultimediaDTO> multimedia;
+
+    public String getSection() {
+        return section;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
+    public Date getDatePublished() {
+        return datePublished;
+    }
+
+    public List<MultimediaDTO> getMultimedia() {
+        return multimedia;
+    }
 }

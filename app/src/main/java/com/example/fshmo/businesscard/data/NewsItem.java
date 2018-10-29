@@ -21,6 +21,7 @@ public class NewsItem implements Serializable {
     private final Date publishDate;
     private final String previewText;
     private final String fullText;
+    private String newsItemUrl;
     private final String PLACEHOLDER_IMG = "https://www.google.ru/search?q=news+place+holder+image&newwindow=1&tbm=isch&source=iu&ictx=1&fir=EfhmYKY75BM0sMhttps://www.google.ru/imgres?imgurl=http%3A%2F%2Fwww.asanet.org%2Fsites%2Fdefault%2Ffiles%2Fdefault_images%2Fplaceholder-news.jpg&imgrefurl=http%3A%2F%2Fwww.asanet.org%2Ffiles%2Fnews-placeholder&docid=jrPflO7vu5YFXM&tbnid=jOKqZCHNXXZbPM%3A&vet=10ahUKEwimoInPiKLeAhVnhosKHYYED_cQMwg4KAEwAQ..i&w=384&h=288&bih=716&biw=1371&q=news%20place%20holder%20image&ved=0ahUKEwimoInPiKLeAhVnhosKHYYED_cQMwg4KAEwAQ&iact=mrc&uact=8";
 
     public NewsItem(String title, String imageUrl, Category category, Date publishDate, String previewText, String fullText) {
@@ -57,6 +58,7 @@ public class NewsItem implements Serializable {
         this.publishDate = dto.getDatePublished();
         this.previewText = dto.getShortDescription();
         this.fullText = dto.getShortDescription();
+        this.newsItemUrl = dto.getUrl();
     }
 
     public String getTitle() {
@@ -81,6 +83,10 @@ public class NewsItem implements Serializable {
 
     public String getFullText() {
         return fullText;
+    }
+
+    public String getNewsItemUrl() {
+        return newsItemUrl;
     }
 
     public String getImageUrlLarge() {

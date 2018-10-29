@@ -73,6 +73,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         errorView = findViewById(R.id.view_error);
         retryBtn = findViewById(R.id.btn_retry_error);
         retryBtn.setOnClickListener(v -> fillViews());
+        //TODO допилить просто error
 
         orientation = this.getResources().getConfiguration().orientation;
         RequestManager glide = Glide.with(this);

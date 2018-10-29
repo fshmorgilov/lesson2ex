@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +25,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
     private TextView publishDateView;
     private TextView fullTextView;
     private Toolbar toolbar;
+    private WebView webView ;
     private final String DATE_FORMAT = "HH:MM, EEEE, dd MMMM, yyyy";
 
     public static void start(@NonNull Activity activity,
@@ -38,17 +40,20 @@ public class NewsDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_details);
 
+
         NewsItem newsItem = (NewsItem) getIntent().getSerializableExtra(KEY_TEXT);
+        this.webView = findViewById(R.id.web_view_details);
         this.imageView = findViewById(R.id.image_nd);
         this.fullTextView = findViewById(R.id.full_text_nd);
         this.publishDateView = findViewById(R.id.publish_date_nd);
         this.titleView = findViewById(R.id.title_nd);
         this.toolbar = findViewById(R.id.my_toolbar);
         this.toolbar.setTitle(newsItem.getCategory().getName());
-//todo проверка на ноль всех вьюх
         setSupportActionBar(this.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_toolbar_back);
         toolbar.setNavigationOnClickListener(v -> finish());
+
+        webView.loadUrl(newsItem.getNewsItemUrl());
 
         String url;
         if (newsItem.getImageUrlLarge() != null)

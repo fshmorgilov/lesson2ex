@@ -17,6 +17,8 @@ public class ResultsDTO {
     private Date datePublished;
     @SerializedName("multimedia")
     private List<MultimediaDTO> multimedia;
+    @SerializedName("url")
+    private String url;
 
     public String getSection() {
         return section;
@@ -36,5 +38,9 @@ public class ResultsDTO {
 
     public List<MultimediaDTO> getMultimedia() {
         return multimedia;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

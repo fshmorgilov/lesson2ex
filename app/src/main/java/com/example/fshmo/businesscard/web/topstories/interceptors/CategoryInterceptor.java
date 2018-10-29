@@ -11,6 +11,7 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
+//TODO выпилить
 public class CategoryInterceptor implements Interceptor {
 
     private NewsTypes newsType;

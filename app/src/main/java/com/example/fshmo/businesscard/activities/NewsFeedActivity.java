@@ -2,18 +2,19 @@ package com.example.fshmo.businesscard.activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.example.fshmo.businesscard.Category;
-import com.example.fshmo.businesscard.NewsItem;
+import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.activities.decorators.GridSpaceItemDecoration;
 import com.example.fshmo.businesscard.data.DataCache;
@@ -23,6 +24,7 @@ import com.example.fshmo.businesscard.web.topstories.TopStoriesApi;
 import com.example.fshmo.businesscard.web.topstories.dto.ResponseDTO;
 import com.example.fshmo.businesscard.web.topstories.dto.ResultsDTO;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,9 @@ public class NewsFeedActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
     private static final String LTAG = NewsFeedActivity.class.getCanonicalName();
+    private View errorView;
+    private View errorNoData;
+    private Button retryBtn;
     private RecyclerView recyclerView;
     private NewsFeedAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -50,11 +55,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_feed);
         initializeViews();
         configuresViews();
-//        try {
-//            this.newsItems.addAll(DataCache.getNewsCache());
-//        } catch (CacheIsEmptyException e) {
-            fillViews();
-//        }
+        fillViews();
     }
 
     @Override
@@ -68,6 +69,11 @@ public class NewsFeedActivity extends AppCompatActivity {
 
     private void initializeViews() {
         Log.i(LTAG, "Initializing...");
+        errorNoData = findViewById(R.id.view_no_data);
+        errorView = findViewById(R.id.view_error);
+        retryBtn = findViewById(R.id.btn_retry_error);
+        retryBtn.setOnClickListener(v -> fillViews());
+
         orientation = this.getResources().getConfiguration().orientation;
         RequestManager glide = Glide.with(this);
         progressBar = findViewById(R.id.progress_bar);
@@ -97,8 +103,9 @@ public class NewsFeedActivity extends AppCompatActivity {
     }
 
     private void fillViews() {
+        showState(State.Loading);
         Log.i(LTAG, "Filling News");
-        int progressStep = 100 / (DataUtils.generateNews().size());
+        int progressStep = 100 / (DataUtils.generateNews().size()); //fixme
         disposable =
                 TopStoriesApi.getInstance(NewsTypes.arts)
                         .topStories().get(NewsTypes.arts)
@@ -113,39 +120,73 @@ public class NewsFeedActivity extends AppCompatActivity {
                                 },
                                 this::logItemError,
                                 this::cacheAndComplete
-                                );
+                        );
         Log.i(LTAG, "Filling News done");
     }
 
     private Observable<NewsItem> makeNewsItem(ResponseDTO responseDTO) {
         List<NewsItem> newsItems = new ArrayList<>();
         for (ResultsDTO result : responseDTO.getResults()) {
-            String url;
-            if (result.getMultimedia().isEmpty())
-                url = null;
-            else
-                url = result.getMultimedia().get(0).getUrl();
-            NewsItem newsItem = new NewsItem(
-                    result.getTitle(),
-                    url,
-                    new Category(5, result.getSection()),//fixme
-                    result.getDatePublished(),
-                    result.getShortDescription(),//fixme
-                    result.getShortDescription()//fixme
-            );
+            NewsItem newsItem = new NewsItem(result);
             newsItems.add(newsItem);
         }
         return Observable.fromIterable(newsItems);
     }
 
-    private void logItemError(Throwable err){
+    private void logItemError(Throwable err) {
         Log.e(LTAG, err.getMessage());
+        if (err instanceof IOException) {
+            showState(State.HasNoData);
+        }
     }
 
-    private void cacheAndComplete(){
+    public void showState(@NonNull State state) {
+        switch (state) {
+            case HasData:
+                recyclerView.setVisibility(View.VISIBLE);
+                errorView.setVisibility(View.GONE);
+                errorNoData.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                break;
+
+            case HasNoData:
+                recyclerView.setVisibility(View.GONE);
+                errorView.setVisibility(View.GONE);
+                errorNoData.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+                break;
+
+            case NetworkError:
+                recyclerView.setVisibility(View.GONE);
+                errorView.setVisibility(View.VISIBLE);
+                errorNoData.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                break;
+
+            case ServerError:
+                recyclerView.setVisibility(View.GONE);
+                errorView.setVisibility(View.VISIBLE);
+                errorNoData.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                break;
+
+            case Loading:
+                recyclerView.setVisibility(View.VISIBLE);
+                errorView.setVisibility(View.GONE);
+                errorNoData.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unknown state: " + state);
+        }
+    }
+
+    private void cacheAndComplete() {
         for (NewsItem newsItem : this.newsItems) {
             DataCache.addToNewsCache(newsItem);
         }
-        this.progressBar.setVisibility(View.GONE);
+        this.showState(State.HasData);
+        //TODO HAS NO DATA
     }
 }

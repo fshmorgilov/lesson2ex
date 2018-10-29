@@ -1,4 +1,4 @@
-package com.example.fshmo.businesscard;
+package com.example.fshmo.businesscard.data;
 
 import java.io.Serializable;
 

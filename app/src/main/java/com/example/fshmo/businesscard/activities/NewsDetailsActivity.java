@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.fshmo.businesscard.NewsItem;
+import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.R;
 
 import java.text.SimpleDateFormat;
@@ -45,16 +45,21 @@ public class NewsDetailsActivity extends AppCompatActivity {
         this.titleView = findViewById(R.id.title_nd);
         this.toolbar = findViewById(R.id.my_toolbar);
         this.toolbar.setTitle(newsItem.getCategory().getName());
-
+//todo проверка на ноль всех вьюх
         setSupportActionBar(this.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_toolbar_back);
         toolbar.setNavigationOnClickListener(v -> finish());
 
+        String url;
+        if (newsItem.getImageUrlLarge() != null)
+            url = newsItem.getImageUrlLarge();
+        else
+            url = newsItem.getImageUrl();
         Glide.with(this)
-                .load(newsItem.getImageUrl())
+                .load(url)
                 .into(imageView);
-        titleView.append(newsItem.getTitle());
 
+        titleView.append(newsItem.getTitle());
         publishDateView.append(new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH)
                 .format(newsItem.getPublishDate()));
         fullTextView.append(newsItem.getFullText());

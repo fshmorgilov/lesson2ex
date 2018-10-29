@@ -64,7 +64,7 @@ public final class TopStoriesApi {
 
         return new OkHttpClient.Builder()
                 .addInterceptor(networkLoggingInterceptor)
-//                .addInterceptor(categoryInterceptor)
+//                .addInterceptor(categoryInterceptor) //TODO выпилить
                 .addInterceptor(apiKeyInterceptor)
                 .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)

@@ -1,11 +1,6 @@
 package com.example.fshmo.businesscard.data;
 
-import com.example.fshmo.businesscard.Category;
-import com.example.fshmo.businesscard.NewsItem;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;

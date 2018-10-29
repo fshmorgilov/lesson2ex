@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.RequestManager;
-import com.example.fshmo.businesscard.NewsItem;
+import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.R;
 
 import java.util.List;

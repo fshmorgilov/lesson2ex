@@ -3,7 +3,6 @@ package com.example.fshmo.businesscard.data;
 import android.util.Log;
 
 import com.example.fshmo.businesscard.App;
-import com.example.fshmo.businesscard.NewsItem;
 import com.example.fshmo.businesscard.data.exceptions.CacheIsEmptyException;
 
 import java.util.ArrayList;

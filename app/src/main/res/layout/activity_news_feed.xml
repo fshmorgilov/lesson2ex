@@ -18,4 +18,31 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:padding="8dp" />
+
+    <LinearLayout
+        android:id="@+id/view_error"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btn_retry_error"
+            android:text="@string/retry_btn_lbl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/view_no_data"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:visibility="gone" >
+
+    </LinearLayout>
 </FrameLayout>
+

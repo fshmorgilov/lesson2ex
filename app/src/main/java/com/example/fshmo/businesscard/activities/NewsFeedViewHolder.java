@@ -1,13 +1,14 @@
 package com.example.fshmo.businesscard.activities;
 
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.RequestManager;
-import com.example.fshmo.businesscard.NewsItem;
+import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.R;
 
 import java.text.SimpleDateFormat;
@@ -32,13 +33,30 @@ class NewsFeedViewHolder extends RecyclerView.ViewHolder {
         photo = v.findViewById(R.id.photo);
     }
 
-    public void bind(final NewsItem newsItem, RequestManager glide, NewsFeedAdapter.OnItemClickListener onItemClickListener) {
-        categoryTextView.setText(newsItem.getCategory().getName());
-        headerTextView.setText(newsItem.getTitle());
-        textTextView.setText(newsItem.getPreviewText());
+    public void bind(@NonNull final NewsItem newsItem,
+                     @NonNull RequestManager glide,
+                     @NonNull NewsFeedAdapter.OnItemClickListener onItemClickListener) {
+        if (newsItem.getCategory() != null)
+            categoryTextView.setText(newsItem.getCategory().getName());
+        else
+            categoryTextView.setVisibility(View.GONE);
+        if (newsItem.getTitle() != null && !"".equals(newsItem.getTitle()))
+            headerTextView.setText(newsItem.getTitle());
+        else
+            headerTextView.setVisibility(View.GONE);
+
+        if (newsItem.getPreviewText() != null && !"".equals(newsItem.getPreviewText()))
+            textTextView.setText(newsItem.getPreviewText());
+        else
+            textTextView.setVisibility(View.GONE);
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH);
-        dateTextView.setText(sdf.format(newsItem.getPublishDate()));
-        glide.load(newsItem.getImageUrl()).into(photo);
+        if (newsItem.getPublishDate() != null)
+            dateTextView.setText(sdf.format(newsItem.getPublishDate()));
+        else
+            dateTextView.setVisibility(View.GONE);
+        String url = newsItem.getImageUrl();
+        glide.load(url)
+                .into(photo);
         view.setOnClickListener(v -> onItemClickListener.onItemClick(newsItem));
     }
 }

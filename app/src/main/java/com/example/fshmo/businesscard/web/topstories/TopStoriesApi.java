@@ -3,9 +3,7 @@ package com.example.fshmo.businesscard.web.topstories;
 
 import android.support.annotation.NonNull;
 
-import com.example.fshmo.businesscard.web.NewsTypes;
 import com.example.fshmo.businesscard.web.topstories.interceptors.ApiKeyInterceptor;
-import com.example.fshmo.businesscard.web.topstories.interceptors.CategoryInterceptor;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,15 +22,13 @@ public final class TopStoriesApi {
 
     private final TopStoriesEndpoint endpoint;
     private final OkHttpClient client;
-    private NewsTypes newsType;
 
     private static TopStoriesApi api;
 
-    public static synchronized TopStoriesApi getInstance(NewsTypes newsType) {
+    public static synchronized TopStoriesApi getInstance() {
         if (api == null) {
             api = new TopStoriesApi();
         }
-        api.setNewsType(newsType);
         return api;
     }
 
@@ -43,7 +39,6 @@ public final class TopStoriesApi {
 
         endpoint = retrofit.create(TopStoriesEndpoint.class);
     }
-
 
     @NonNull
     private Retrofit buildRetrofit() {
@@ -60,11 +55,9 @@ public final class TopStoriesApi {
         final HttpLoggingInterceptor networkLoggingInterceptor = new HttpLoggingInterceptor();
         networkLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         final ApiKeyInterceptor apiKeyInterceptor = new ApiKeyInterceptor(API_KEY);
-        final CategoryInterceptor categoryInterceptor = new CategoryInterceptor(newsType);
 
         return new OkHttpClient.Builder()
                 .addInterceptor(networkLoggingInterceptor)
-//                .addInterceptor(categoryInterceptor) //TODO выпилить
                 .addInterceptor(apiKeyInterceptor)
                 .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
@@ -76,7 +69,4 @@ public final class TopStoriesApi {
         return endpoint;
     }
 
-    private void setNewsType(NewsTypes newsType) {
-        this.newsType = newsType;
-    }
 }

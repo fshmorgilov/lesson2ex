@@ -1,5 +1,7 @@
 package com.example.fshmo.businesscard.web;
 
+import java.util.Arrays;
+
 public enum NewsTypes {
     home,
     opinion,
@@ -26,5 +28,9 @@ public enum NewsTypes {
     realestate,
     automobiles,
     obituaries,
-    insider
+    insider;
+
+    public static String[] getNames(Class<? extends Enum<?>> e) {
+        return Arrays.toString(e.getEnumConstants()).replaceAll("^.|.$", "").split(", ");
+    }
 }

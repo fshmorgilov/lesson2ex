@@ -3,6 +3,8 @@ package com.example.fshmo.businesscard.activities;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -45,9 +47,11 @@ public class NewsFeedActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.ItemDecoration decoration;
     private List<NewsItem> newsItems = new ArrayList<>();
+    private AlertDialog.Builder alertBuilder;
     private int progressBarProgress = 0;
     private int orientation;
     private Disposable disposable;
+    private String type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         errorView = findViewById(R.id.view_error);
         retryBtn = findViewById(R.id.btn_retry_error);
         retryBtn.setOnClickListener(v -> fillViews());
+        alertBuilder = new AlertDialog.Builder(this);
         //TODO допилить просто error
 
         orientation = this.getResources().getConfiguration().orientation;
@@ -100,6 +105,14 @@ public class NewsFeedActivity extends AppCompatActivity {
             layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
+
+        String[] arg = NewsTypes.getNames(NewsTypes.class);
+
+        alertBuilder.setTitle("Choose category")
+                .setItems(
+                        R.array.categories_array,
+                        (dialog, which) -> type = arg[which]
+                );
         Log.i(LTAG, "Configuring done");
     }
 
@@ -108,8 +121,8 @@ public class NewsFeedActivity extends AppCompatActivity {
         Log.i(LTAG, "Filling News");
         int progressStep = 100 / (DataUtils.generateNews().size()); //fixme
         disposable =
-                TopStoriesApi.getInstance(NewsTypes.arts)
-                        .topStories().get(NewsTypes.arts)
+                TopStoriesApi.getInstance()
+                        .topStories().get(NewsTypes.valueOf(type))
                         .flatMapObservable(this::makeNewsItem)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -125,7 +138,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         Log.i(LTAG, "Filling News done");
     }
 
-    private Observable<NewsItem> makeNewsItem(ResponseDTO responseDTO) {
+    private Observable<NewsItem> makeNewsItem(@NonNull ResponseDTO responseDTO) {
         List<NewsItem> newsItems = new ArrayList<>();
         for (ResultsDTO result : responseDTO.getResults()) {
             NewsItem newsItem = new NewsItem(result);
@@ -134,7 +147,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         return Observable.fromIterable(newsItems);
     }
 
-    private void logItemError(Throwable err) {
+    private void logItemError(@Nullable Throwable err) {
         Log.e(LTAG, err.getMessage());
         if (err instanceof IOException) {
             showState(State.HasNoData);

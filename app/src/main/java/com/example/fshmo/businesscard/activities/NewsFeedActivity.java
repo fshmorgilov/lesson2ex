@@ -20,7 +20,6 @@ import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.activities.decorators.GridSpaceItemDecoration;
 import com.example.fshmo.businesscard.data.DataCache;
-import com.example.fshmo.businesscard.data.DataUtils;
 import com.example.fshmo.businesscard.web.NewsTypes;
 import com.example.fshmo.businesscard.web.topstories.TopStoriesApi;
 import com.example.fshmo.businesscard.web.topstories.dto.ResponseDTO;
@@ -51,7 +50,8 @@ public class NewsFeedActivity extends AppCompatActivity {
     private int progressBarProgress = 0;
     private int orientation;
     private Disposable disposable;
-    private String type;
+    private String categoryName = "home";
+    private int progressStep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,12 +106,11 @@ public class NewsFeedActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
-        String[] arg = NewsTypes.getNames(NewsTypes.class);
-
+        String[] categoryNames = NewsTypes.getNames(NewsTypes.class);
         alertBuilder.setTitle("Choose category")
                 .setItems(
                         R.array.categories_array,
-                        (dialog, which) -> type = arg[which]
+                        (dialog, which) -> categoryName = categoryNames[which]
                 );
         Log.i(LTAG, "Configuring done");
     }
@@ -119,19 +118,14 @@ public class NewsFeedActivity extends AppCompatActivity {
     private void fillViews() {
         showState(State.Loading);
         Log.i(LTAG, "Filling News");
-        int progressStep = 100 / (DataUtils.generateNews().size()); //fixme
         disposable =
                 TopStoriesApi.getInstance()
-                        .topStories().get(NewsTypes.valueOf(type))
+                        .topStories().get(NewsTypes.valueOf(categoryName))
                         .flatMapObservable(this::makeNewsItem)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                (newsItem) -> {
-                                    adapter.addItem(newsItem);
-                                    progressBarProgress = progressBarProgress + progressStep;
-                                    progressBar.setProgress(progressBarProgress);
-                                },
+                                this::showItem,
                                 this::logItemError,
                                 this::cacheAndComplete
                         );
@@ -140,6 +134,7 @@ public class NewsFeedActivity extends AppCompatActivity {
 
     private Observable<NewsItem> makeNewsItem(@NonNull ResponseDTO responseDTO) {
         List<NewsItem> newsItems = new ArrayList<>();
+        this.progressStep = 100/newsItems.size();
         for (ResultsDTO result : responseDTO.getResults()) {
             NewsItem newsItem = new NewsItem(result);
             newsItems.add(newsItem);
@@ -202,5 +197,11 @@ public class NewsFeedActivity extends AppCompatActivity {
         }
         this.showState(State.HasData);
         //TODO HAS NO DATA
+    }
+
+    private void showItem(NewsItem newsItem) {
+        adapter.addItem(newsItem);
+        progressBarProgress = progressBarProgress + progressStep;
+        progressBar.setProgress(progressBarProgress);
     }
 }

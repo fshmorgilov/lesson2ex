@@ -5,6 +5,13 @@
     android:layout_height="match_parent"
     tools:context=".activities.NewsFeedActivity">
 
+    <Button
+        android:id="@+id/category_selector_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/colorPrimaryDark"/>
+
     <ProgressBar
         android:id="@+id/progress_bar"
         style="?android:attr/progressBarStyleHorizontal"
@@ -27,11 +34,16 @@
         android:padding="8dp"
         android:visibility="gone">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_no_data" />
+
         <Button
             android:id="@+id/btn_retry_error"
-            android:text="@string/retry_btn_lbl"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/retry_btn_lbl" />
 
     </LinearLayout>
 
@@ -41,7 +53,12 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="8dp"
-        android:visibility="gone" >
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_no_data" />
 
     </LinearLayout>
 </FrameLayout>

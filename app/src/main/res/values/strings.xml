@@ -9,6 +9,8 @@
     <string name="title_activity_news_details">NewsDetailsActivity</string>
     <string name="ny_api_key">258d5b758edc4dce91a904e111f29f41</string>
     <string name="retry_btn_lbl">RETRY</string>
+    <string name="text_no_data">Sorry, no data to display.</string>
+    <string name="category_default">home</string>
     <array name="categories_array">
         <item>home</item>
         <item>opinion</item>

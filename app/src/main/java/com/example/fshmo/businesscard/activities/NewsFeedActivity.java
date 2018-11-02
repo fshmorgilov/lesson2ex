@@ -36,22 +36,26 @@ import io.reactivex.schedulers.Schedulers;
 
 public class NewsFeedActivity extends AppCompatActivity {
 
-    private ProgressBar progressBar;
     private static final String LTAG = NewsFeedActivity.class.getCanonicalName();
+
+    private ProgressBar progressBar;
     private View errorView;
     private View errorNoData;
     private Button retryBtn;
+    private Button categoryBtn;
     private RecyclerView recyclerView;
     private NewsFeedAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.ItemDecoration decoration;
-    private List<NewsItem> newsItems = new ArrayList<>();
     private AlertDialog.Builder alertBuilder;
+
+    private List<NewsItem> newsItems = new ArrayList<>();
+
+    private String categoryName = getString(R.string.category_default);
     private int progressBarProgress = 0;
     private int orientation;
-    private Disposable disposable;
-    private String categoryName = "home";
     private int progressStep;
+    private Disposable disposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +80,14 @@ public class NewsFeedActivity extends AppCompatActivity {
         errorNoData = findViewById(R.id.view_no_data);
         errorView = findViewById(R.id.view_error);
         retryBtn = findViewById(R.id.btn_retry_error);
-        retryBtn.setOnClickListener(v -> fillViews());
+        categoryBtn = findViewById(R.id.category_selector_btn);
         alertBuilder = new AlertDialog.Builder(this);
-        //TODO допилить просто error
+
+        progressBar = findViewById(R.id.progress_bar);
+        progressBar.setProgress(0);
 
         orientation = this.getResources().getConfiguration().orientation;
         RequestManager glide = Glide.with(this);
-        progressBar = findViewById(R.id.progress_bar);
-        progressBar.setProgress(0);
         recyclerView = findViewById(R.id.recycler_view);
         adapter = new NewsFeedAdapter(
                 newsItems,
@@ -107,11 +111,23 @@ public class NewsFeedActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         String[] categoryNames = NewsTypes.getNames(NewsTypes.class);
+        categoryBtn.setText(this.categoryName);
         alertBuilder.setTitle("Choose category")
                 .setItems(
                         R.array.categories_array,
-                        (dialog, which) -> categoryName = categoryNames[which]
+                        (dialog, which) -> {
+                            this.categoryName = categoryNames[which];
+                            categoryBtn.setText(this.categoryName);
+                            int current_size = newsItems.size();
+                            this.newsItems.clear();
+                            adapter.notifyItemRangeRemoved(0, current_size);
+                            fillViews();
+                        }
                 );
+
+        retryBtn.setOnClickListener(v -> fillViews());
+        categoryBtn.setOnClickListener(v -> alertBuilder.show());
+
         Log.i(LTAG, "Configuring done");
     }
 
@@ -134,11 +150,11 @@ public class NewsFeedActivity extends AppCompatActivity {
 
     private Observable<NewsItem> makeNewsItem(@NonNull ResponseDTO responseDTO) {
         List<NewsItem> newsItems = new ArrayList<>();
-        this.progressStep = 100/newsItems.size();
         for (ResultsDTO result : responseDTO.getResults()) {
             NewsItem newsItem = new NewsItem(result);
             newsItems.add(newsItem);
         }
+        this.progressStep = 100 / newsItems.size();
         return Observable.fromIterable(newsItems);
     }
 
@@ -153,6 +169,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         switch (state) {
             case HasData:
                 recyclerView.setVisibility(View.VISIBLE);
+                categoryBtn.setVisibility(View.VISIBLE);
                 errorView.setVisibility(View.GONE);
                 errorNoData.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
@@ -160,6 +177,7 @@ public class NewsFeedActivity extends AppCompatActivity {
 
             case HasNoData:
                 recyclerView.setVisibility(View.GONE);
+                categoryBtn.setVisibility(View.GONE);
                 errorView.setVisibility(View.GONE);
                 errorNoData.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
@@ -167,6 +185,8 @@ public class NewsFeedActivity extends AppCompatActivity {
 
             case NetworkError:
                 recyclerView.setVisibility(View.GONE);
+                categoryBtn.setVisibility(View.GONE);
+                errorView.setVisibility(View.GONE);
                 errorView.setVisibility(View.VISIBLE);
                 errorNoData.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
@@ -174,6 +194,8 @@ public class NewsFeedActivity extends AppCompatActivity {
 
             case ServerError:
                 recyclerView.setVisibility(View.GONE);
+                categoryBtn.setVisibility(View.GONE);
+                errorView.setVisibility(View.GONE);
                 errorView.setVisibility(View.VISIBLE);
                 errorNoData.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
@@ -181,6 +203,8 @@ public class NewsFeedActivity extends AppCompatActivity {
 
             case Loading:
                 recyclerView.setVisibility(View.VISIBLE);
+                categoryBtn.setVisibility(View.GONE);
+                errorView.setVisibility(View.GONE);
                 errorView.setVisibility(View.GONE);
                 errorNoData.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
@@ -192,11 +216,14 @@ public class NewsFeedActivity extends AppCompatActivity {
     }
 
     private void cacheAndComplete() {
-        for (NewsItem newsItem : this.newsItems) {
-            DataCache.addToNewsCache(newsItem);
+        if (this.newsItems.isEmpty()) {
+            showState(State.HasNoData);
+        } else {
+            for (NewsItem newsItem : this.newsItems) {
+                DataCache.addToNewsCache(newsItem);
+            }
+            showState(State.HasData);
         }
-        this.showState(State.HasData);
-        //TODO HAS NO DATA
     }
 
     private void showItem(NewsItem newsItem) {

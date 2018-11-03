@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".activities.NewsFeedActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/feed_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="#ffffff" />
 
     <Button
         android:id="@+id/category_selector_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
+        android:visibility="gone"
         android:textColor="@color/colorPrimaryDark"/>
 
     <ProgressBar
@@ -61,5 +73,5 @@
             android:text="@string/text_no_data" />
 
     </LinearLayout>
-</FrameLayout>
+</LinearLayout>
 

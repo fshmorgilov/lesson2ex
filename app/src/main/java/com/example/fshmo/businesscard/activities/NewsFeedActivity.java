@@ -9,17 +9,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.activities.decorators.GridSpaceItemDecoration;
 import com.example.fshmo.businesscard.data.DataCache;
+import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.web.NewsTypes;
 import com.example.fshmo.businesscard.web.topstories.TopStoriesApi;
 import com.example.fshmo.businesscard.web.topstories.dto.ResponseDTO;
@@ -42,16 +46,16 @@ public class NewsFeedActivity extends AppCompatActivity {
     private View errorView;
     private View errorNoData;
     private Button retryBtn;
-    private Button categoryBtn;
     private RecyclerView recyclerView;
     private NewsFeedAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.ItemDecoration decoration;
+    private Toolbar toolbar;
     private AlertDialog.Builder alertBuilder;
 
     private List<NewsItem> newsItems = new ArrayList<>();
 
-    private String categoryName = getString(R.string.category_default);
+    private String categoryName = String.valueOf(NewsTypes.home);
     private int progressBarProgress = 0;
     private int orientation;
     private int progressStep;
@@ -80,11 +84,11 @@ public class NewsFeedActivity extends AppCompatActivity {
         errorNoData = findViewById(R.id.view_no_data);
         errorView = findViewById(R.id.view_error);
         retryBtn = findViewById(R.id.btn_retry_error);
-        categoryBtn = findViewById(R.id.category_selector_btn);
         alertBuilder = new AlertDialog.Builder(this);
 
         progressBar = findViewById(R.id.progress_bar);
         progressBar.setProgress(0);
+        toolbar = findViewById(R.id.feed_toolbar);
 
         orientation = this.getResources().getConfiguration().orientation;
         RequestManager glide = Glide.with(this);
@@ -102,6 +106,7 @@ public class NewsFeedActivity extends AppCompatActivity {
 
     private void configuresViews() {
         Log.i(LTAG, "Configuring...");
+
         recyclerView.setHasFixedSize(true);
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             layoutManager = new LinearLayoutManager(this);
@@ -111,13 +116,12 @@ public class NewsFeedActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         String[] categoryNames = NewsTypes.getNames(NewsTypes.class);
-        categoryBtn.setText(this.categoryName);
         alertBuilder.setTitle("Choose category")
                 .setItems(
                         R.array.categories_array,
                         (dialog, which) -> {
                             this.categoryName = categoryNames[which];
-                            categoryBtn.setText(this.categoryName);
+                            toolbar.setTitle(this.categoryName.toUpperCase());
                             int current_size = newsItems.size();
                             this.newsItems.clear();
                             adapter.notifyItemRangeRemoved(0, current_size);
@@ -126,7 +130,9 @@ public class NewsFeedActivity extends AppCompatActivity {
                 );
 
         retryBtn.setOnClickListener(v -> fillViews());
-        categoryBtn.setOnClickListener(v -> alertBuilder.show());
+
+        toolbar.setTitle(this.categoryName.toUpperCase());
+        setSupportActionBar(toolbar);
 
         Log.i(LTAG, "Configuring done");
     }
@@ -169,45 +175,45 @@ public class NewsFeedActivity extends AppCompatActivity {
         switch (state) {
             case HasData:
                 recyclerView.setVisibility(View.VISIBLE);
-                categoryBtn.setVisibility(View.VISIBLE);
                 errorView.setVisibility(View.GONE);
                 errorNoData.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
+                toolbar.setVisibility(View.VISIBLE);
                 break;
 
             case HasNoData:
                 recyclerView.setVisibility(View.GONE);
-                categoryBtn.setVisibility(View.GONE);
                 errorView.setVisibility(View.GONE);
                 errorNoData.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
+                toolbar.setVisibility(View.VISIBLE);
                 break;
 
             case NetworkError:
                 recyclerView.setVisibility(View.GONE);
-                categoryBtn.setVisibility(View.GONE);
                 errorView.setVisibility(View.GONE);
                 errorView.setVisibility(View.VISIBLE);
                 errorNoData.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
+                toolbar.setVisibility(View.VISIBLE);
                 break;
 
             case ServerError:
                 recyclerView.setVisibility(View.GONE);
-                categoryBtn.setVisibility(View.GONE);
                 errorView.setVisibility(View.GONE);
                 errorView.setVisibility(View.VISIBLE);
                 errorNoData.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
+                toolbar.setVisibility(View.VISIBLE);
                 break;
 
             case Loading:
                 recyclerView.setVisibility(View.VISIBLE);
-                categoryBtn.setVisibility(View.GONE);
                 errorView.setVisibility(View.GONE);
                 errorView.setVisibility(View.GONE);
                 errorNoData.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
+                toolbar.setVisibility(View.GONE);
                 break;
 
             default:
@@ -226,9 +232,30 @@ public class NewsFeedActivity extends AppCompatActivity {
         }
     }
 
-    private void showItem(NewsItem newsItem) {
+    private void showItem(@NonNull NewsItem newsItem) {
         adapter.addItem(newsItem);
         progressBarProgress = progressBarProgress + progressStep;
         progressBar.setProgress(progressBarProgress);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.feed_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.category_selector:
+                alertBuilder.show();
+                return true;
+            case R.id.about:
+                AboutActivity.start(NewsFeedActivity.this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

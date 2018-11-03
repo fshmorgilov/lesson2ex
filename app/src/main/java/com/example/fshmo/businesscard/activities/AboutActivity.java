@@ -1,5 +1,6 @@
 package com.example.fshmo.businesscard.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -17,6 +18,11 @@ public class AboutActivity extends AppCompatActivity {
 
     private static final String LTAG = AboutActivity.class.getName();
     private final String[] addresses = new String[]{"fshmorgilov@gmail.com"};
+
+    public static void start(Activity activity) {
+        Intent intent = new Intent(activity, AboutActivity.class);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

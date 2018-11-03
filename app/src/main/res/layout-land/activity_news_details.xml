@@ -15,9 +15,15 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:titleTextColor="#ffffff" />
 
+    <WebView
+        android:id="@+id/web_view_details"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/relative_nd"

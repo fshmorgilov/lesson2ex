@@ -1,14 +1,19 @@
 package com.example.fshmo.businesscard.data;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.fshmo.businesscard.data.model.NewsEntity;
 import com.example.fshmo.businesscard.web.topstories.dto.MultimediaDTO;
 import com.example.fshmo.businesscard.web.topstories.dto.ResultsDTO;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class NewsItem implements Serializable {
 
@@ -18,13 +23,18 @@ public class NewsItem implements Serializable {
     private final String imageUrl;
     private String imageUrlLarge;
     private final Category category;
-    private final Date publishDate;
+    private Date publishDate;
     private final String previewText;
     private final String fullText;
     private String newsItemUrl;
     private final String PLACEHOLDER_IMG = "https://www.google.ru/search?q=news+place+holder+image&newwindow=1&tbm=isch&source=iu&ictx=1&fir=EfhmYKY75BM0sMhttps://www.google.ru/imgres?imgurl=http%3A%2F%2Fwww.asanet.org%2Fsites%2Fdefault%2Ffiles%2Fdefault_images%2Fplaceholder-news.jpg&imgrefurl=http%3A%2F%2Fwww.asanet.org%2Ffiles%2Fnews-placeholder&docid=jrPflO7vu5YFXM&tbnid=jOKqZCHNXXZbPM%3A&vet=10ahUKEwimoInPiKLeAhVnhosKHYYED_cQMwg4KAEwAQ..i&w=384&h=288&bih=716&biw=1371&q=news%20place%20holder%20image&ved=0ahUKEwimoInPiKLeAhVnhosKHYYED_cQMwg4KAEwAQ&iact=mrc&uact=8";
 
-    public NewsItem(String title, String imageUrl, Category category, Date publishDate, String previewText, String fullText) {
+    public NewsItem(@NonNull String title,
+                    @NonNull String imageUrl,
+                    @NonNull String previewText,
+                    @Nullable Category category,
+                    @Nullable Date publishDate,
+                    @Nullable String fullText) {
         this.title = title;
         this.imageUrl = imageUrl;
         this.category = category;
@@ -33,7 +43,7 @@ public class NewsItem implements Serializable {
         this.fullText = fullText;
     }
 
-    public NewsItem(ResultsDTO dto) {
+    public NewsItem(@NonNull ResultsDTO dto) {
         List<MultimediaDTO> mediaList = dto.getMultimedia();
         if (mediaList.isEmpty()) {
             this.imageUrl = PLACEHOLDER_IMG;
@@ -59,6 +69,21 @@ public class NewsItem implements Serializable {
         this.previewText = dto.getShortDescription();
         this.fullText = dto.getShortDescription();
         this.newsItemUrl = dto.getUrl();
+    }
+
+    public NewsItem(@NonNull NewsEntity newsEntity) {
+        this.title = newsEntity.getTitle();
+        this.imageUrl = newsEntity.getImageUrl();
+        this.category = new Category(0, newsEntity.getCategory());
+        this.previewText = newsEntity.getPreviewText();
+        this.fullText = newsEntity.getPreviewText();
+        try {
+            this.publishDate = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH) //fixme format
+                    .parse(newsEntity.getPublishDate());
+        } catch (ParseException e) {
+            this.publishDate = new Date();
+            Log.e(LTAG, e.getMessage());
+        }
     }
 
     public String getTitle() {

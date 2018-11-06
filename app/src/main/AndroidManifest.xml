@@ -17,17 +17,17 @@
         <activity
             android:name=".activities.AboutActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity android:name=".activities.NewsFeedActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".activities.NewsFeedActivity" />
         <activity
             android:name=".activities.NewsDetailsActivity"
             android:label="@string/title_activity_news_details"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.IntroActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

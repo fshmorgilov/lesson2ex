@@ -1,5 +1,7 @@
 package com.example.fshmo.businesscard.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -60,6 +62,11 @@ public class NewsFeedActivity extends AppCompatActivity {
     private int orientation;
     private int progressStep;
     private Disposable disposable;
+
+    public static void start(Activity activity){
+        Intent intent = new Intent(activity, NewsFeedActivity.class);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

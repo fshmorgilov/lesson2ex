@@ -11,6 +11,7 @@
     <string name="retry_btn_lbl">RETRY</string>
     <string name="text_no_data">Sorry, no data to display.</string>
     <string name="category_default">home</string>
+    <string name="intro_description">intro</string>
     <array name="categories_array">
         <item>home</item>
         <item>opinion</item>

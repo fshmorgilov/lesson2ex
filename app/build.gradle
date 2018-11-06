@@ -42,6 +42,10 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation "com.squareup.okhttp3:logging-interceptor:3.11.0"
     api "com.squareup.retrofit2:converter-gson:2.4.0"
+    //ROOM
+    implementation group: 'androidx.room', name: 'room-runtime', version: '2.1.0-alpha02'
+//    implementation 'androidx.room:room-runtime:2.1.0-alpha02'
+    annotationProcessor 'androidx.room:room-compiler:2.1.0-alpha02'
     //
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

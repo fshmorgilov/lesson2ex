@@ -10,7 +10,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 
-@Database(entities = {NewsEntity.class}, version = 1)
+@Database(entities = {NewsEntity.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;

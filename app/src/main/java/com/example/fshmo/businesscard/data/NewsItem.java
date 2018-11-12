@@ -31,9 +31,9 @@ public class NewsItem implements Serializable {
 
     public NewsItem(@NonNull String title,
                     @NonNull String imageUrl,
-                    @NonNull String previewText,
                     @Nullable Category category,
                     @Nullable Date publishDate,
+                    @NonNull String previewText,
                     @Nullable String fullText) {
         this.title = title;
         this.imageUrl = imageUrl;

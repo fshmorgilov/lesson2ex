@@ -29,6 +29,7 @@ import com.example.fshmo.businesscard.activities.decorators.GridSpaceItemDecorat
 import com.example.fshmo.businesscard.data.DataCache;
 import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.data.model.AppDatabase;
+import com.example.fshmo.businesscard.data.model.NewsDao;
 import com.example.fshmo.businesscard.utils.NewsItemHelper;
 import com.example.fshmo.businesscard.web.NewsTypes;
 import com.example.fshmo.businesscard.web.topstories.TopStoriesApi;
@@ -41,6 +42,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -68,6 +70,8 @@ public class NewsFeedActivity extends AppCompatActivity {
     private int orientation;
     private int progressStep;
     private Disposable disposable;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private NewsDao newsDao;
 
     public static void start(Activity activity) {
         Intent intent = new Intent(activity, NewsFeedActivity.class);
@@ -78,9 +82,23 @@ public class NewsFeedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_feed);
+        newsDao = AppDatabase.getInstance(this).newsDao();
         initializeViews();
         configuresViews();
-//        fillViews();
+        observeDb();
+    }
+
+    private void observeDb() {
+
+        compositeDisposable.add(
+//                Observable.just(newsDao.getAll())
+                Observable.just(true)
+                        .map(aBoolean -> newsDao.getAll())
+                        .map(NewsItemHelper::convertDaoListoToDomain)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::showItems)
+        );
     }
 
     @Override
@@ -140,12 +158,12 @@ public class NewsFeedActivity extends AppCompatActivity {
                             int current_size = newsItems.size();
                             this.newsItems.clear();
                             adapter.notifyItemRangeRemoved(0, current_size);
-                            fillViews();
+                            loadToDb();
                         }
                 );
 
-        retryBtn.setOnClickListener(v -> fillViews());
-        fab.setOnClickListener(v -> fillViews());
+        retryBtn.setOnClickListener(v -> loadToDb());
+        fab.setOnClickListener(v -> loadToDb());
 
         toolbar.setTitle(this.categoryName.toUpperCase());
         setSupportActionBar(toolbar);
@@ -153,23 +171,18 @@ public class NewsFeedActivity extends AppCompatActivity {
         Log.i(LTAG, "Configuring done");
     }
 
-    private void fillViews() {
+    private void loadToDb() {
         showState(State.Loading);
-        Log.i(LTAG, "Filling News");
-        disposable =
+        compositeDisposable.add(
                 TopStoriesApi.getInstance()
                         .topStories().get(NewsTypes.valueOf(categoryName))
-                        .flatMapObservable(NewsItemHelper::parseToDaoArray)
-                        .doOnNext(AppDatabase.getInstance(this).newsDao()::insert)
-                        .map(NewsItemHelper::convertDaoToDomain)
+                        .map(NewsItemHelper::parseToDaoArray)
                         .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                this::showItem,
-                                this::logItemError,
-                                this::cacheAndComplete
-                        );
-        Log.i(LTAG, "Filling News done");
+                                newsDao::insertAll,
+                                this::logItemError
+                        ));
+        Log.i(LTAG, "Writing items to Database");
     }
 
     private Observable<NewsItem> makeNewsItem(@NonNull ResponseDTO responseDTO) {
@@ -253,11 +266,10 @@ public class NewsFeedActivity extends AppCompatActivity {
         }
     }
 
-    private void showItem(@NonNull NewsItem newsItem) {
-        adapter.addItem(newsItem);
-        progressBarProgress = progressBarProgress + progressStep;
-        progressBar.setProgress(progressBarProgress);
-        Log.i(LTAG, "Added item: " + newsItem.getTitle());
+    private void showItems(@NonNull List<NewsItem> newsItems) {
+        //TODO при первом запуске showNoData
+        adapter.setDataset(newsItems);
+        showState(State.HasData);
     }
 
     @Override

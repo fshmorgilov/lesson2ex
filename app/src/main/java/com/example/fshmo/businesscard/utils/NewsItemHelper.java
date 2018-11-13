@@ -39,7 +39,15 @@ public abstract class NewsItemHelper {
         return new NewsItem(entity);
     }
 
-    public static Observable<NewsEntity> parseToDaoArray(@NonNull ResponseDTO responseDTO) {
+    public static List<NewsItem> convertDaoListoToDomain(@NonNull List<NewsEntity> newsEntities) {
+        List<NewsItem> newsItems = new ArrayList<>();
+        for (NewsEntity entity : newsEntities ) {
+            newsItems.add(new NewsItem(entity));
+        }
+        return newsItems;
+    }
+
+    public static List<NewsEntity> parseToDaoArray(@NonNull ResponseDTO responseDTO) {
         Log.i(LTAG, "Decomposing reply - Quantity: " + String.valueOf(responseDTO.getResultCnt()));
         List<NewsEntity> newsEntities = new ArrayList<>();
         for (ResultsDTO result : responseDTO.getResults()) {
@@ -47,6 +55,6 @@ public abstract class NewsItemHelper {
             Log.i(LTAG, "Parsing: " + result.getTitle());
             newsEntities.add(newsEntity);
         }
-        return Observable.fromIterable(newsEntities);
+        return newsEntities;
     }
 }

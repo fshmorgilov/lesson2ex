@@ -20,7 +20,7 @@ public interface NewsDao {
     List<NewsEntity> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(NewsEntity ... newsEntities);
+    void insertAll(List<NewsEntity> newsEntities);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(NewsEntity newsEntity);

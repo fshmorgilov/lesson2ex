@@ -22,24 +22,25 @@ public class IntroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-
-        SharedPreferences preference = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        Log.e(LTAG, String.valueOf(preference.getBoolean(KEY_STARTED, true)));
-        if (preference.getBoolean(KEY_STARTED, true)) {
-            SharedPreferences.Editor editor = preference.edit();
-            editor.putBoolean(KEY_STARTED, false);
-            editor.apply();
-            imageView = findViewById(R.id.intro_image_view);
-            Glide.with(this)
-                    .load(R.drawable.intro_screen)
-                    .into(imageView);
-            Log.i(LTAG, "Showing Intro Activity");
-        } else {
-            SharedPreferences.Editor editor = preference.edit();
-            editor.putBoolean(KEY_STARTED, true);
-            editor.apply();
-            Log.i(LTAG, "Showing Feed Activity");
-            NewsFeedActivity.start(this);
-        }
+        NewsFeedActivity.start(this);
+        //TODO раскоментить
+//        SharedPreferences preference = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+//        Log.e(LTAG, String.valueOf(preference.getBoolean(KEY_STARTED, true)));
+//        if (preference.getBoolean(KEY_STARTED, true)) {
+//            SharedPreferences.Editor editor = preference.edit();
+//            editor.putBoolean(KEY_STARTED, false);
+//            editor.apply();
+//            imageView = findViewById(R.id.intro_image_view);
+//            Glide.with(this)
+//                    .load(R.drawable.intro_screen)
+//                    .into(imageView);
+//            Log.i(LTAG, "Showing Intro Activity");
+//        } else {
+//            SharedPreferences.Editor editor = preference.edit();
+//            editor.putBoolean(KEY_STARTED, true);
+//            editor.apply();
+//            Log.i(LTAG, "Showing Feed Activity");
+//            NewsFeedActivity.start(this);
+//    }
     }
 }

@@ -17,23 +17,28 @@ import java.util.Locale;
 
 public class NewsItem implements Serializable {
 
+    public static final String DATE_FORMAL_LONG = "EEE MMM dd HH:mm:ss zzz yyyy";
+    public static final String DATE_FORMAT = "HH:mm, EE";
+
     private static final String LTAG = NewsItem.class.getName();
 
     private final String title;
     private final String imageUrl;
-    private String imageUrlLarge;
     private final Category category;
-    private Date publishDate;
     private final String previewText;
     private final String fullText;
+    private String imageUrlLarge;
+    private Date publishDate;
     private String newsItemUrl;
+
+
     private final String PLACEHOLDER_IMG = "https://www.google.ru/search?q=news+place+holder+image&newwindow=1&tbm=isch&source=iu&ictx=1&fir=EfhmYKY75BM0sMhttps://www.google.ru/imgres?imgurl=http%3A%2F%2Fwww.asanet.org%2Fsites%2Fdefault%2Ffiles%2Fdefault_images%2Fplaceholder-news.jpg&imgrefurl=http%3A%2F%2Fwww.asanet.org%2Ffiles%2Fnews-placeholder&docid=jrPflO7vu5YFXM&tbnid=jOKqZCHNXXZbPM%3A&vet=10ahUKEwimoInPiKLeAhVnhosKHYYED_cQMwg4KAEwAQ..i&w=384&h=288&bih=716&biw=1371&q=news%20place%20holder%20image&ved=0ahUKEwimoInPiKLeAhVnhosKHYYED_cQMwg4KAEwAQ&iact=mrc&uact=8";
 
     public NewsItem(@NonNull String title,
                     @NonNull String imageUrl,
                     @Nullable Category category,
                     @Nullable Date publishDate,
-                    @NonNull String previewText,
+                    @Nullable String previewText,
                     @Nullable String fullText) {
         this.title = title;
         this.imageUrl = imageUrl;
@@ -78,8 +83,9 @@ public class NewsItem implements Serializable {
         this.previewText = newsEntity.getPreviewText();
         this.fullText = newsEntity.getPreviewText();
         try {
-            this.publishDate = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH) //fixme format
+            this.publishDate = new SimpleDateFormat(DATE_FORMAL_LONG, Locale.ENGLISH)
                     .parse(newsEntity.getPublishDate());
+            Log.i(LTAG, "Parsed: " + newsEntity.getPublishDate());
         } catch (ParseException e) {
             this.publishDate = new Date();
             Log.e(LTAG, e.getMessage());

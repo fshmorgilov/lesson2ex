@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
@@ -26,6 +28,8 @@ import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.activities.decorators.GridSpaceItemDecoration;
 import com.example.fshmo.businesscard.data.DataCache;
 import com.example.fshmo.businesscard.data.NewsItem;
+import com.example.fshmo.businesscard.data.model.AppDatabase;
+import com.example.fshmo.businesscard.utils.NewsItemHelper;
 import com.example.fshmo.businesscard.web.NewsTypes;
 import com.example.fshmo.businesscard.web.topstories.TopStoriesApi;
 import com.example.fshmo.businesscard.web.topstories.dto.ResponseDTO;
@@ -45,9 +49,11 @@ public class NewsFeedActivity extends AppCompatActivity {
     private static final String LTAG = NewsFeedActivity.class.getCanonicalName();
 
     private ProgressBar progressBar;
+    private FrameLayout recyclerFrame;
     private View errorView;
     private View errorNoData;
     private Button retryBtn;
+    private FloatingActionButton fab;
     private RecyclerView recyclerView;
     private NewsFeedAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -63,7 +69,7 @@ public class NewsFeedActivity extends AppCompatActivity {
     private int progressStep;
     private Disposable disposable;
 
-    public static void start(Activity activity){
+    public static void start(Activity activity) {
         Intent intent = new Intent(activity, NewsFeedActivity.class);
         activity.startActivity(intent);
     }
@@ -74,7 +80,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_feed);
         initializeViews();
         configuresViews();
-        fillViews();
+//        fillViews();
     }
 
     @Override
@@ -91,6 +97,8 @@ public class NewsFeedActivity extends AppCompatActivity {
         errorNoData = findViewById(R.id.view_no_data);
         errorView = findViewById(R.id.view_error);
         retryBtn = findViewById(R.id.btn_retry_error);
+        fab = findViewById(R.id.fab);
+        recyclerFrame = findViewById(R.id.recycler_frame);
         alertBuilder = new AlertDialog.Builder(this);
 
         progressBar = findViewById(R.id.progress_bar);
@@ -137,6 +145,7 @@ public class NewsFeedActivity extends AppCompatActivity {
                 );
 
         retryBtn.setOnClickListener(v -> fillViews());
+        fab.setOnClickListener(v -> fillViews());
 
         toolbar.setTitle(this.categoryName.toUpperCase());
         setSupportActionBar(toolbar);
@@ -150,7 +159,9 @@ public class NewsFeedActivity extends AppCompatActivity {
         disposable =
                 TopStoriesApi.getInstance()
                         .topStories().get(NewsTypes.valueOf(categoryName))
-                        .flatMapObservable(this::makeNewsItem)
+                        .flatMapObservable(NewsItemHelper::parseToDaoArray)
+                        .doOnNext(AppDatabase.getInstance(this).newsDao()::insert)
+                        .map(NewsItemHelper::convertDaoToDomain)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -225,8 +236,11 @@ public class NewsFeedActivity extends AppCompatActivity {
 
             default:
                 throw new IllegalArgumentException("Unknown state: " + state);
+
         }
+        Log.i(LTAG, "Showing state: " + state.name());
     }
+
 
     private void cacheAndComplete() {
         if (this.newsItems.isEmpty()) {
@@ -243,6 +257,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         adapter.addItem(newsItem);
         progressBarProgress = progressBarProgress + progressStep;
         progressBar.setProgress(progressBarProgress);
+        Log.i(LTAG, "Added item: " + newsItem.getTitle());
     }
 
     @Override

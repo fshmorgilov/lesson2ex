@@ -15,31 +15,31 @@ import java.util.Date;
         indices = @Index(value = "id", unique = true))
 public class NewsEntity {
     @PrimaryKey
-    @NonNull
+//    @NonNull
     @ColumnInfo(name = "id")
     private int id;
 
-    @NonNull
+//    @NonNull
     @ColumnInfo(name = "title")
     private String title;
 
-    @NonNull
+//    @NonNull
     @ColumnInfo(name = "imageUrl")
     private String imageUrl;
 
-    @NonNull
+//    @NonNull
     @ColumnInfo(name = "category")
     private String category;
 
-    @Nullable
+//    @Nullable
     @ColumnInfo(name = "publishDate")
     private String publishDate;
 
-    @NonNull
+//    @NonNull
     @ColumnInfo(name = "previewText")
     private String previewText;
 
-    @Nullable
+//    @Nullable
     @ColumnInfo(name = "fullText")
     private String fullText;
 
@@ -50,7 +50,9 @@ public class NewsEntity {
         this.publishDate = newsItem.getPublishDate().toString();
         this.newsItemUrl = newsItem.getNewsItemUrl();
         this.fullText = newsItem.getFullText();
+        this.previewText = newsItem.getPreviewText();
     }
+
 
     public void setId(@NonNull int id) {
         this.id = id;

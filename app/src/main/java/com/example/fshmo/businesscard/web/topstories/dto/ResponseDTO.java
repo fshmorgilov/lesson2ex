@@ -14,10 +14,10 @@ public class ResponseDTO {
     @SerializedName("results")
     private List<ResultsDTO> results;
 
-
     public Date getLastUpdated() {
         return lastUpdated;
     }
+
 //TODO Запилить для прогресс бара
     public int getResultCnt() {
         return resultCnt;

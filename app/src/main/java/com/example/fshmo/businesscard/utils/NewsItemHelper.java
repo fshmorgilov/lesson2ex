@@ -40,9 +40,11 @@ public abstract class NewsItemHelper {
     }
 
     public static Observable<NewsEntity> parseToDaoArray(@NonNull ResponseDTO responseDTO) {
+        Log.i(LTAG, "Decomposing reply - Quantity: " + String.valueOf(responseDTO.getResultCnt()));
         List<NewsEntity> newsEntities = new ArrayList<>();
         for (ResultsDTO result : responseDTO.getResults()) {
             NewsEntity newsEntity = NewsItemHelper.convertDtoToDao(result);
+            Log.i(LTAG, "Parsing: " + result.getTitle());
             newsEntities.add(newsEntity);
         }
         return Observable.fromIterable(newsEntities);

@@ -89,9 +89,7 @@ public class NewsFeedActivity extends AppCompatActivity {
     }
 
     private void observeDb() {
-
         compositeDisposable.add(
-//                Observable.just(newsDao.getAll())
                 Observable.just(true)
                         .map(aBoolean -> newsDao.getAll())
                         .map(NewsItemHelper::convertDaoListoToDomain)

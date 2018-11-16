@@ -1,16 +1,13 @@
 package com.example.fshmo.businesscard.data.model;
 
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.OnConflictStrategy;
-import android.arch.persistence.room.Query;
-
-import com.example.fshmo.businesscard.data.NewsItem;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
 
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
 
 @Dao
@@ -20,7 +17,8 @@ public interface NewsDao {
     List<NewsEntity> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(List<NewsEntity> newsEntities);
+    void insertAll(NewsEntity ... newsEntities);
+//    void insertAll(List<NewsEntity> newsEntities);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(NewsEntity newsEntity);

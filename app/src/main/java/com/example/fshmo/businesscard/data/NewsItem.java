@@ -1,7 +1,7 @@
 package com.example.fshmo.businesscard.data;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.example.fshmo.businesscard.data.model.NewsEntity;

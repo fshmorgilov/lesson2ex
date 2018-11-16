@@ -1,7 +1,7 @@
 package com.example.fshmo.businesscard.activities;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,8 +55,9 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder> {
     }
 
     public void setDataset(@NonNull List<NewsItem> newsItems){
-        dataset = newsItems;
-        notifyDataSetChanged();
+        int currSize = this.dataset.size();
+        this.dataset.addAll(newsItems);
+        notifyItemRangeInserted(currSize + 1, newsItems.size());
         Log.i(LTAG, "Dataset changed. Added: " + newsItems.size() + " items");
 
     }

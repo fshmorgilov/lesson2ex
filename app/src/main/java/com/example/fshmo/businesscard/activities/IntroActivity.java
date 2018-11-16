@@ -1,12 +1,9 @@
 package com.example.fshmo.businesscard.activities;
 
-import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.example.fshmo.businesscard.R;
 
 public class IntroActivity extends AppCompatActivity {

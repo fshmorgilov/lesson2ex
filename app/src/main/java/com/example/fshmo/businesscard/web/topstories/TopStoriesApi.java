@@ -1,7 +1,7 @@
 package com.example.fshmo.businesscard.web.topstories;
 
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.example.fshmo.businesscard.web.topstories.interceptors.ApiKeyInterceptor;
 

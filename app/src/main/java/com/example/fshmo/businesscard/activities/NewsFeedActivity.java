@@ -4,15 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -128,7 +128,7 @@ public class NewsFeedActivity extends AppCompatActivity {
                 newsItems,
                 glide,
                 item -> {
-                    Log.e(LTAG, item.getTitle());
+                    Log.e(LTAG, "News item selected: " + item.getTitle());
                     NewsDetailsActivity.start(NewsFeedActivity.this, item);
                 });
         decoration = new GridSpaceItemDecoration(4, 4);
@@ -177,7 +177,11 @@ public class NewsFeedActivity extends AppCompatActivity {
                         .map(NewsItemHelper::parseToDaoArray)
                         .subscribeOn(Schedulers.io())
                         .subscribe(
-                                newsDao::insertAll,
+                                newsEntities -> {
+                                    progressStep = 100/newsEntities.length;
+                                    progressBarProgress = 0;
+                                    newsDao.insertAll(newsEntities);
+                                },
                                 this::logItemError
                         ));
         Log.i(LTAG, "Writing items to Database");
@@ -268,6 +272,11 @@ public class NewsFeedActivity extends AppCompatActivity {
         //TODO при первом запуске showNoData
         adapter.setDataset(newsItems);
         showState(State.HasData);
+    }
+
+    private void displayNews(){
+        loadToDb();
+        observeDb();
     }
 
     @Override

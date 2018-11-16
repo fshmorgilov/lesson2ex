@@ -56,7 +56,10 @@ public abstract class NewsItemHelper {
     }
 
     public static NewsEntity[] parseToDaoArray(@NonNull ResponseDTO dto){
-       List<NewsEntity> newsEntities = parseToDaoList(dto) ;
-        return (NewsEntity[]) newsEntities.toArray();
+        NewsEntity[] newsEntitiesArray = new NewsEntity[dto.getResults().size()];
+        List<NewsEntity> entities = parseToDaoList(dto);
+        entities.toArray(newsEntitiesArray);
+        Log.d(TAG, "parseToDaoArray: Array size: " + newsEntitiesArray.length);
+        return newsEntitiesArray;
     }
 }

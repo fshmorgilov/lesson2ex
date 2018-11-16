@@ -181,8 +181,8 @@ public class NewsFeedActivity extends AppCompatActivity {
                                     progressStep = 100/newsEntities.length;
                                     progressBarProgress = 0;
                                     newsDao.insertAll(newsEntities);
-                                },
-                                this::logItemError
+                                }
+//                                this::logItemError
                         ));
         Log.i(LTAG, "Writing items to Database");
     }

@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
@@ -85,6 +86,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         newsDao = AppDatabase.getInstance(this).newsDao();
         initializeViews();
         configuresViews();
+        showState(State.HasData);
         observeDb();
     }
 
@@ -160,8 +162,8 @@ public class NewsFeedActivity extends AppCompatActivity {
                         }
                 );
 
-        retryBtn.setOnClickListener(v -> loadToDb());
-        fab.setOnClickListener(v -> loadToDb());
+        retryBtn.setOnClickListener(v -> displayNews());
+        fab.setOnClickListener(v -> displayNews());
 
         toolbar.setTitle(this.categoryName.toUpperCase());
         setSupportActionBar(toolbar);
@@ -170,7 +172,6 @@ public class NewsFeedActivity extends AppCompatActivity {
     }
 
     private void loadToDb() {
-        showState(State.Loading);
         compositeDisposable.add(
                 TopStoriesApi.getInstance()
                         .topStories().get(NewsTypes.valueOf(categoryName))
@@ -178,23 +179,14 @@ public class NewsFeedActivity extends AppCompatActivity {
                         .subscribeOn(Schedulers.io())
                         .subscribe(
                                 newsEntities -> {
+                                    newsDao.deleteAll();
                                     progressStep = 100/newsEntities.length;
                                     progressBarProgress = 0;
                                     newsDao.insertAll(newsEntities);
-                                }
-//                                this::logItemError
+                                },
+                                this::logItemError
                         ));
         Log.i(LTAG, "Writing items to Database");
-    }
-
-    private Observable<NewsItem> makeNewsItem(@NonNull ResponseDTO responseDTO) {
-        List<NewsItem> newsItems = new ArrayList<>();
-        for (ResultsDTO result : responseDTO.getResults()) {
-            NewsItem newsItem = new NewsItem(result);
-            newsItems.add(newsItem);
-        }
-        this.progressStep = 100 / newsItems.size();
-        return Observable.fromIterable(newsItems);
     }
 
     private void logItemError(@Nullable Throwable err) {
@@ -253,9 +245,22 @@ public class NewsFeedActivity extends AppCompatActivity {
                 throw new IllegalArgumentException("Unknown state: " + state);
 
         }
+        manageFab(state);
         Log.i(LTAG, "Showing state: " + state.name());
     }
 
+    private void manageFab(State state){
+        if (state == State.HasData
+                || state == State.NetworkError){
+            fab.setEnabled(true);
+            fab.setClickable(true);
+            fab.setAlpha(1.0f);
+        } else {
+            fab.setEnabled(false);
+            fab.setClickable(false);
+            fab.setAlpha(0.3f);
+        }
+    }
 
     private void cacheAndComplete() {
         if (this.newsItems.isEmpty()) {
@@ -271,12 +276,14 @@ public class NewsFeedActivity extends AppCompatActivity {
     private void showItems(@NonNull List<NewsItem> newsItems) {
         //TODO при первом запуске showNoData
         adapter.setDataset(newsItems);
-        showState(State.HasData);
     }
 
     private void displayNews(){
+        showState(State.Loading);
         loadToDb();
         observeDb();
+        Toast.makeText(this, "Displaying news", Toast.LENGTH_LONG).show();
+        showState(State.HasData);
     }
 
     @Override

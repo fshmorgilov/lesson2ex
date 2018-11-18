@@ -12,8 +12,7 @@ import com.example.fshmo.businesscard.data.NewsItem;
 @Entity(tableName = "news",
         indices = @Index(value = "id", unique = true))
 public class NewsEntity {
-    @PrimaryKey
-//    @NonNull
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
 

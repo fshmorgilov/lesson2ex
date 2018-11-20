@@ -22,6 +22,8 @@ public class NewsItem implements Serializable {
 
     private static final String LTAG = NewsItem.class.getName();
 
+
+    private int id;
     private final String title;
     private final String imageUrl;
     private final Category category;
@@ -77,11 +79,13 @@ public class NewsItem implements Serializable {
     }
 
     public NewsItem(@NonNull NewsEntity newsEntity) {
+        this.id = newsEntity.getId();
         this.title = newsEntity.getTitle();
         this.imageUrl = newsEntity.getImageUrl();
         this.category = new Category(0, newsEntity.getCategory());
         this.previewText = newsEntity.getPreviewText();
         this.fullText = newsEntity.getPreviewText();
+        this.newsItemUrl = newsEntity.getNewsItemUrl();
         try {
             this.publishDate = new SimpleDateFormat(DATE_FORMAL_LONG, Locale.ENGLISH)
                     .parse(newsEntity.getPublishDate());
@@ -122,6 +126,10 @@ public class NewsItem implements Serializable {
 
     public String getImageUrlLarge() {
         return imageUrlLarge;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override

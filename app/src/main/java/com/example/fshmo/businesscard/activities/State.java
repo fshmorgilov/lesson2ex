@@ -6,6 +6,7 @@ enum State {
     HasNoData,
     Loading,
     NetworkError,
-    ServerError
+    ServerError,
+    PartiallyMissingData
 
 }

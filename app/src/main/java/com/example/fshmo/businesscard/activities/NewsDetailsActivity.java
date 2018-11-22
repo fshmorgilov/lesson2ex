@@ -4,9 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -14,6 +18,9 @@ import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.data.model.AppDatabase;
 import com.example.fshmo.businesscard.utils.NewsItemHelper;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,12 +42,31 @@ public class NewsDetailsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private WebView webView;
     private NewsItem newsItem;
+    private ScrollView newsItemDetailsScroll;
 
     public static void start(@NonNull Activity activity,
                              @NonNull NewsItem newsItem) {
         Intent intent = new Intent(activity, NewsDetailsActivity.class);
         intent.putExtra(KEY_TEXT, newsItem);
         activity.startActivity(intent);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.details_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case (R.id.delete_news_item):
+                AppDatabase.getInstance(this).newsDao().deleteById(newsItem.getId());
+                Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
+                finish();
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -59,6 +85,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
         this.titleView = findViewById(R.id.title_nd);
         this.toolbar = findViewById(R.id.my_toolbar);
         this.errorImageView = findViewById(R.id.error_image_view);
+        this.newsItemDetailsScroll = findViewById(R.id.news_item_details);
         setSupportActionBar(this.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_toolbar_back);
         toolbar.setNavigationOnClickListener(v -> finish());
@@ -86,21 +113,48 @@ public class NewsDetailsActivity extends AppCompatActivity {
     private void showState(State state) {
         switch (state) {
             case HasData:
-                webView.setVisibility(View.VISIBLE);
+                webView.setVisibility(View.GONE);
+                newsItemDetailsScroll.setVisibility(View.VISIBLE);
                 errorImageView.setVisibility(View.GONE);
                 break;
+
             case HasNoData:
                 webView.setVisibility(View.GONE);
+                newsItemDetailsScroll.setVisibility(View.GONE);
                 errorImageView.setVisibility(View.VISIBLE);
+
                 Glide.with(this)
                         .load("https://www.oddee.com/wp-content/uploads/_media/imgs/articles2/a96984_e1.jpg")
                         .into(errorImageView);
+                break;
+
+            case PartiallyMissingData:
+                webView.setVisibility(View.VISIBLE);
+                newsItemDetailsScroll.setVisibility(View.GONE);
+                errorImageView.setVisibility(View.GONE);
                 break;
         }
     }
 
     private void displayNewsItem() {
-        toolbar.setTitle(newsItem.getCategory().getName());
         webView.loadUrl(newsItem.getNewsItemUrl());
+
+        toolbar.setTitle(newsItem.getCategory().getName());
+        String url;
+        if (newsItem.getImageUrlLarge() != null)
+            url = newsItem.getImageUrlLarge();
+        else
+            url = newsItem.getImageUrl();
+
+        Glide.with(this)
+                .load(url)
+                .into(imageView);
+
+        titleView.append(newsItem.getTitle());
+        publishDateView.append(new SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH)
+                .format(newsItem.getPublishDate()));
+        fullTextView.append(newsItem.getFullText());
     }
+
+
 }

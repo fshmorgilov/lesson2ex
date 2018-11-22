@@ -34,8 +34,6 @@ import com.example.fshmo.businesscard.data.model.NewsDao;
 import com.example.fshmo.businesscard.utils.NewsItemHelper;
 import com.example.fshmo.businesscard.web.NewsTypes;
 import com.example.fshmo.businesscard.web.topstories.TopStoriesApi;
-import com.example.fshmo.businesscard.web.topstories.dto.ResponseDTO;
-import com.example.fshmo.businesscard.web.topstories.dto.ResultsDTO;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,7 +47,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class NewsFeedActivity extends AppCompatActivity {
 
-    private static final String LTAG = NewsFeedActivity.class.getCanonicalName();
+    private static final String TAG = NewsFeedActivity.class.getCanonicalName();
 
     private ProgressBar progressBar;
     private FrameLayout recyclerFrame;
@@ -90,6 +88,15 @@ public class NewsFeedActivity extends AppCompatActivity {
         observeDb();
     }
 
+    @Override
+    protected void onRestart() {
+        Log.i(TAG, "onRestart: resuming...");
+        newsItems.clear();
+        observeDb();
+        adapter.notifyDataSetChanged();
+        super.onRestart();
+    }
+
     private void observeDb() {
         compositeDisposable.add(
                 Observable.just(true)
@@ -111,7 +118,7 @@ public class NewsFeedActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        Log.i(LTAG, "Initializing...");
+        Log.i(TAG, "Initializing...");
         errorNoData = findViewById(R.id.view_no_data);
         errorView = findViewById(R.id.view_error);
         retryBtn = findViewById(R.id.btn_retry_error);
@@ -130,15 +137,15 @@ public class NewsFeedActivity extends AppCompatActivity {
                 newsItems,
                 glide,
                 item -> {
-                    Log.e(LTAG, "News item selected: " + item.getTitle());
+                    Log.e(TAG, "News item selected: " + item.getTitle());
                     NewsDetailsActivity.start(NewsFeedActivity.this, item);
                 });
         decoration = new GridSpaceItemDecoration(4, 4);
-        Log.i(LTAG, "Initializing done");
+        Log.i(TAG, "Initializing done");
     }
 
     private void configuresViews() {
-        Log.i(LTAG, "Configuring...");
+        Log.i(TAG, "Configuring...");
 
         recyclerView.setHasFixedSize(true);
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -168,10 +175,12 @@ public class NewsFeedActivity extends AppCompatActivity {
         toolbar.setTitle(this.categoryName.toUpperCase());
         setSupportActionBar(toolbar);
 
-        Log.i(LTAG, "Configuring done");
+        Log.i(TAG, "Configuring done");
     }
 
     private void loadToDb() {
+        progressBarProgress = 0;
+        progressBar.setProgress(progressBarProgress);
         compositeDisposable.add(
                 TopStoriesApi.getInstance()
                         .topStories().get(NewsTypes.valueOf(categoryName))
@@ -181,16 +190,15 @@ public class NewsFeedActivity extends AppCompatActivity {
                                 newsEntities -> {
                                     newsDao.deleteAll();
                                     progressStep = 100/newsEntities.length;
-                                    progressBarProgress = 0;
                                     newsDao.insertAll(newsEntities);
                                 },
                                 this::logItemError
                         ));
-        Log.i(LTAG, "Writing items to Database");
+        Log.i(TAG, "Writing items to Database");
     }
 
     private void logItemError(@Nullable Throwable err) {
-        Log.e(LTAG, err.getMessage());
+        Log.e(TAG, err.getMessage());
         if (err instanceof IOException) {
             showState(State.HasNoData);
         }
@@ -246,7 +254,7 @@ public class NewsFeedActivity extends AppCompatActivity {
 
         }
         manageFab(state);
-        Log.i(LTAG, "Showing state: " + state.name());
+        Log.i(TAG, "Showing state: " + state.name());
     }
 
     private void manageFab(State state){
@@ -262,19 +270,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         }
     }
 
-    private void cacheAndComplete() {
-        if (this.newsItems.isEmpty()) {
-            showState(State.HasNoData);
-        } else {
-            for (NewsItem newsItem : this.newsItems) {
-                DataCache.addToNewsCache(newsItem);
-            }
-            showState(State.HasData);
-        }
-    }
-
     private void showItems(@NonNull List<NewsItem> newsItems) {
-        //TODO при первом запуске showNoData
         adapter.setDataset(newsItems);
     }
 

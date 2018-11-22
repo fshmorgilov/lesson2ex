@@ -16,31 +16,36 @@ public class NewsEntity {
     @ColumnInfo(name = "id")
     private int id;
 
-//    @NonNull
+    @NonNull
     @ColumnInfo(name = "title")
     private String title;
 
-//    @NonNull
+    @NonNull
     @ColumnInfo(name = "imageUrl")
     private String imageUrl;
 
-//    @NonNull
+    @NonNull
     @ColumnInfo(name = "category")
     private String category;
 
-//    @Nullable
+    @Nullable
     @ColumnInfo(name = "publishDate")
     private String publishDate;
 
-//    @NonNull
+    @Nullable
     @ColumnInfo(name = "previewText")
     private String previewText;
 
-//    @Nullable
+    @Nullable
     @ColumnInfo(name = "fullText")
     private String fullText;
 
-    public NewsEntity(@NonNull NewsItem newsItem){
+    @Nullable
+    @ColumnInfo(name = "imageLargeUrl")
+    private String imageLargeUrl;
+
+
+    public NewsEntity(@NonNull NewsItem newsItem) {
         this.category = newsItem.getCategory().getName();
         this.imageUrl = newsItem.getImageUrl();
         this.title = newsItem.getTitle();
@@ -129,6 +134,14 @@ public class NewsEntity {
     private String newsItemUrl;
 
 
-    public NewsEntity(){}
+    public NewsEntity() {
+    }
 
+    public String getImageLargeUrl() {
+        return imageLargeUrl;
+    }
+
+    public void setImageLargeUrl(String imageLargeUrl) {
+        this.imageLargeUrl = imageLargeUrl;
+    }
 }

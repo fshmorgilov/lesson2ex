@@ -25,6 +25,7 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -43,6 +44,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
     private WebView webView;
     private NewsItem newsItem;
     private ScrollView newsItemDetailsScroll;
+    private Disposable disposable;
 
     public static void start(@NonNull Activity activity,
                              @NonNull NewsItem newsItem) {
@@ -50,6 +52,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
         intent.putExtra(KEY_TEXT, newsItem);
         activity.startActivity(intent);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -61,9 +64,22 @@ public class NewsDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case (R.id.delete_news_item):
-                AppDatabase.getInstance(this).newsDao().deleteById(newsItem.getId());
-                Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
-                finish();
+                if(newsItem != null) {
+                    int id = newsItem.getId();
+                    Disposable subscribe = Maybe.just(true)
+                            .doOnSuccess(boo -> AppDatabase.getInstance(this).newsDao().deleteById(id))
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                    aBoolean -> Log.i(TAG, "onOptionsItemSelected: deleted item: " + id),
+                                    (e) -> Log.e(TAG, "onOptionsItemSelected: error deleting item" + e.getMessage())
+                            );
+                    Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
+                    finish();
+                } else {
+                    Log.i(TAG, "onOptionsItemSelected: newsItemIsNull");
+                    finish();
+                }
                 break;
         }
         return true;
@@ -95,7 +111,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
         int newsItemId;
         newsItemId = ((NewsItem) getIntent().getSerializableExtra(KEY_TEXT)).getId();
         Log.i(TAG, "findNewsItem: newsItem id:" + String.valueOf(newsItemId));
-        Disposable disposable = AppDatabase.getInstance(this).newsDao().findById(newsItemId)
+        disposable = AppDatabase.getInstance(this).newsDao().findById(newsItemId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(entity -> {
@@ -108,6 +124,12 @@ public class NewsDetailsActivity extends AppCompatActivity {
                             showState(State.HasNoData);
                             Log.e(TAG, "Error in finding the item: " + e.getMessage());
                         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        disposable.dispose();
+        super.onDestroy();
     }
 
     private void showState(State state) {
@@ -155,6 +177,4 @@ public class NewsDetailsActivity extends AppCompatActivity {
                 .format(newsItem.getPublishDate()));
         fullTextView.append(newsItem.getFullText());
     }
-
-
 }

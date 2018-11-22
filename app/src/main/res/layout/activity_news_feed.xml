@@ -53,8 +53,6 @@
 
     </FrameLayout>
 
-    <!--TODO: landscape and floating button-->
-
     <LinearLayout
         android:id="@+id/view_error"
         android:layout_width="wrap_content"

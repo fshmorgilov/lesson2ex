@@ -18,7 +18,6 @@ public class ResponseDTO {
         return lastUpdated;
     }
 
-//TODO Запилить для прогресс бара
     public int getResultCnt() {
         return resultCnt;
     }

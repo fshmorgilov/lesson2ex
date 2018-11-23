@@ -23,7 +23,7 @@ public class IntroAboutFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_details_main, container, false);
         ImageView imageView = view.findViewById(R.id.intro_details_fragment_image_view);
         Glide.with(getActivity())
-                .load(R.drawable.intro_screen)
+                .load(R.drawable.intro_about_screen)
                 .into(imageView);
         return view;
     }

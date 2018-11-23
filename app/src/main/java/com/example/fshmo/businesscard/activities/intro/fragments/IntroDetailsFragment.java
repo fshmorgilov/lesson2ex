@@ -1,6 +1,5 @@
 package com.example.fshmo.businesscard.activities.intro.fragments;
 
-import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +23,7 @@ public class IntroDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_details_main, container, false);
         ImageView imageView = view.findViewById(R.id.intro_details_fragment_image_view);
         Glide.with(getActivity())
-                .load(R.drawable.intro_screen)
+                .load(R.drawable.intro_details_screen)
                 .into(imageView);
         return view;
     }

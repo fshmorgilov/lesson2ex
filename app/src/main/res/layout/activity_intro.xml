@@ -9,24 +9,27 @@
     tools:context=".activities.intro.IntroActivity">
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/pager"
+        android:id="@+id/intro_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="9" />
 
     <FrameLayout
         android:id="@+id/intro_main_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
-    <!--<ImageView-->
-    <!--android:id="@+id/intro_image_view"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:contentDescription="@string/intro_description" />-->
-    <!---->
     <TextView
+        android:id="@+id/intro_main_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="@dimen/common_text_size_sw600dp"
+        android:textAlignment="center"
+        android:padding="@dimen/common_padding"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"
         android:text="@string/intro_welcome" />
 
 </LinearLayout>

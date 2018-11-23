@@ -165,7 +165,7 @@ public class NewsFeedActivity extends AppCompatActivity {
                             int current_size = newsItems.size();
                             this.newsItems.clear();
                             adapter.notifyItemRangeRemoved(0, current_size);
-                            loadToDb();
+                            displayNews();
                         }
                 );
 

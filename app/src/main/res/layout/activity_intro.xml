@@ -4,14 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/colorPrimaryDark"
-    tools:context=".activities.IntroActivity">
+    android:orientation="vertical"
+    tools:context=".activities.intro.IntroActivity">
 
-    <ImageView
-        android:id="@+id/intro_image_view"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/intro_description" />
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/intro_main_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--<ImageView-->
+    <!--android:id="@+id/intro_image_view"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:contentDescription="@string/intro_description" />-->
+    <!---->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/intro_welcome" />
 
 </LinearLayout>

@@ -13,6 +13,7 @@
     <string name="category_default">home</string>
     <string name="intro_description">intro</string>
     <string name="delete_menu_option">Delete</string>
+    <string name="intro_welcome">Welcome!</string>
     <array name="categories_array">
         <item>home</item>
         <item>opinion</item>

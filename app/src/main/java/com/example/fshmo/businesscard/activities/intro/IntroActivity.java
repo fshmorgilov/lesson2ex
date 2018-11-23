@@ -16,7 +16,7 @@ import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.activities.intro.fragments.IntroAboutFragment;
 import com.example.fshmo.businesscard.activities.intro.fragments.IntroDetailsFragment;
 import com.example.fshmo.businesscard.activities.intro.fragments.IntroMainFragment;
-import com.example.fshmo.businesscard.activities.NewsFeedActivity;
+import com.example.fshmo.businesscard.activities.main.NewsFeedActivity;
 
 public class IntroActivity extends FragmentActivity {
 

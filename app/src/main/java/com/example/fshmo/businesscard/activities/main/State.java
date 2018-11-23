@@ -1,6 +1,6 @@
-package com.example.fshmo.businesscard.activities;
+package com.example.fshmo.businesscard.activities.main;
 
-enum State {
+public enum State {
 
     HasData,
     HasNoData,

@@ -1,13 +1,15 @@
-package com.example.fshmo.businesscard.activities;
+package com.example.fshmo.businesscard.activities.main;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -23,18 +25,22 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class NewsDetailsActivity extends AppCompatActivity {
+public class NewsDetailsFragment extends Fragment {
 
-    private static final String TAG = NewsDetailsActivity.class.getName();
+    private static final String TAG = NewsDetailsFragment.class.getName();
     private static final String KEY_TEXT = "KEY_TEXT";
+
     private final String DATE_FORMAT = "HH:MM, EEEE, dd MMMM, yyyy";
+
+    private View fragmentMainView;
     private ImageView imageView;
     private ImageView errorImageView;
     private TextView titleView;
@@ -44,30 +50,31 @@ public class NewsDetailsActivity extends AppCompatActivity {
     private WebView webView;
     private NewsItem newsItem;
     private ScrollView newsItemDetailsScroll;
-    private Disposable disposable;
+    private Disposable findNewsItemSubscription;
+    private Disposable deleteItemSubscription;
 
     public static void start(@NonNull Activity activity,
                              @NonNull NewsItem newsItem) {
-        Intent intent = new Intent(activity, NewsDetailsActivity.class);
+        Intent intent = new Intent(activity, NewsDetailsFragment.class);
         intent.putExtra(KEY_TEXT, newsItem);
         activity.startActivity(intent);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.details_menu, menu);
-        return true;
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //TODO переделать в кнопку
         switch (item.getItemId()) {
             case (R.id.delete_news_item):
                 if(newsItem != null) {
                     int id = newsItem.getId();
-                    Disposable subscribe = Maybe.just(true)
-                            .doOnSuccess(boo -> AppDatabase.getInstance(this).newsDao().deleteById(id))
+                    deleteItemSubscription = Maybe.just(true)
+                            .doOnSuccess(boo -> AppDatabase.getInstance(getActivity()).newsDao().deleteById(id))
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
@@ -75,43 +82,44 @@ public class NewsDetailsActivity extends AppCompatActivity {
                                     (e) -> Log.e(TAG, "onOptionsItemSelected: error deleting item" + e.getMessage())
                             );
                     Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
-                    finish();
+                    getFragmentManager().popBackStack();
                 } else {
                     Log.i(TAG, "onOptionsItemSelected: newsItemIsNull");
-                    finish();
+                    getFragmentManager().popBackStack();
                 }
                 break;
         }
         return true;
     }
 
+    @Nullable
     @Override
-    protected void onCreate(@NonNull Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_details);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        fragmentMainView = inflater.inflate(R.layout.activity_news_details, container, false);
         initializeViews();
         findNewsItem();
+        return fragmentMainView;
     }
 
     private void initializeViews() {
-        this.webView = findViewById(R.id.web_view_details);
-        this.imageView = findViewById(R.id.image_nd);
-        this.fullTextView = findViewById(R.id.full_text_nd);
-        this.publishDateView = findViewById(R.id.publish_date_nd);
-        this.titleView = findViewById(R.id.title_nd);
-        this.toolbar = findViewById(R.id.my_toolbar);
-        this.errorImageView = findViewById(R.id.error_image_view);
-        this.newsItemDetailsScroll = findViewById(R.id.news_item_details);
-        setSupportActionBar(this.toolbar);
+        this.webView = fragmentMainView.findViewById(R.id.web_view_details);
+        this.imageView = fragmentMainView.findViewById(R.id.image_nd);
+        this.fullTextView = fragmentMainView.findViewById(R.id.full_text_nd);
+        this.publishDateView = fragmentMainView.findViewById(R.id.publish_date_nd);
+        this.titleView = fragmentMainView.findViewById(R.id.title_nd);
+        this.toolbar = fragmentMainView.findViewById(R.id.my_toolbar);
+        this.errorImageView = fragmentMainView.findViewById(R.id.error_image_view);
+        this.newsItemDetailsScroll = fragmentMainView.findViewById(R.id.news_item_details);
+//        fragmentMainView.setSupportActionBar(this.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_toolbar_back);
-        toolbar.setNavigationOnClickListener(v -> finish());
+        toolbar.setNavigationOnClickListener(v -> getFragmentManager().popBackStack());
     }
 
     private void findNewsItem() {
         int newsItemId;
         newsItemId = ((NewsItem) getIntent().getSerializableExtra(KEY_TEXT)).getId();
         Log.i(TAG, "findNewsItem: newsItem id:" + String.valueOf(newsItemId));
-        disposable = AppDatabase.getInstance(this).newsDao().findById(newsItemId)
+        findNewsItemSubscription = AppDatabase.getInstance(getActivity()).newsDao().findById(newsItemId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(entity -> {
@@ -127,8 +135,9 @@ public class NewsDetailsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        disposable.dispose();
+    public void onDestroy() {
+        findNewsItemSubscription.dispose();
+        deleteItemSubscription.dispose();
         super.onDestroy();
     }
 
@@ -145,7 +154,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
                 newsItemDetailsScroll.setVisibility(View.GONE);
                 errorImageView.setVisibility(View.VISIBLE);
 
-                Glide.with(this)
+                Glide.with(getActivity())
                         .load("https://www.oddee.com/wp-content/uploads/_media/imgs/articles2/a96984_e1.jpg")
                         .into(errorImageView);
                 break;
@@ -168,7 +177,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
         else
             url = newsItem.getImageUrl();
 
-        Glide.with(this)
+        Glide.with(getActivity())
                 .load(url)
                 .into(imageView);
 

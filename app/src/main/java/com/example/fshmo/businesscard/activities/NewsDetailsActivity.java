@@ -44,7 +44,8 @@ public class NewsDetailsActivity extends AppCompatActivity {
     private WebView webView;
     private NewsItem newsItem;
     private ScrollView newsItemDetailsScroll;
-    private Disposable disposable;
+    private Disposable findDisposable;
+    private Disposable deleteDisposable;
 
     public static void start(@NonNull Activity activity,
                              @NonNull NewsItem newsItem) {
@@ -64,18 +65,8 @@ public class NewsDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case (R.id.delete_news_item):
-                if(newsItem != null) {
-                    int id = newsItem.getId();
-                    Disposable subscribe = Maybe.just(true)
-                            .doOnSuccess(boo -> AppDatabase.getInstance(this).newsDao().deleteById(id))
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    aBoolean -> Log.i(TAG, "onOptionsItemSelected: deleted item: " + id),
-                                    (e) -> Log.e(TAG, "onOptionsItemSelected: error deleting item" + e.getMessage())
-                            );
-                    Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
-                    finish();
+                if (newsItem != null) {
+                    deleteNewsItem(newsItem.getId());
                 } else {
                     Log.i(TAG, "onOptionsItemSelected: newsItemIsNull");
                     finish();
@@ -91,6 +82,19 @@ public class NewsDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_details);
         initializeViews();
         findNewsItem();
+    }
+
+    private void deleteNewsItem(int id) {
+        deleteDisposable = Maybe.just(true)
+                .doOnSuccess(boo -> AppDatabase.getInstance(this).newsDao().deleteById(id))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        aBoolean -> Log.i(TAG, "onOptionsItemSelected: deleted item: " + id),
+                        (e) -> Log.e(TAG, "onOptionsItemSelected: error deleting item" + e.getMessage())
+                );
+        Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
+        finish();
     }
 
     private void initializeViews() {
@@ -111,7 +115,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
         int newsItemId;
         newsItemId = ((NewsItem) getIntent().getSerializableExtra(KEY_TEXT)).getId();
         Log.i(TAG, "findNewsItem: newsItem id:" + String.valueOf(newsItemId));
-        disposable = AppDatabase.getInstance(this).newsDao().findById(newsItemId)
+        findDisposable = AppDatabase.getInstance(this).newsDao().findById(newsItemId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(entity -> {
@@ -128,7 +132,8 @@ public class NewsDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        disposable.dispose();
+        findDisposable.dispose();
+        deleteDisposable.dispose();
         super.onDestroy();
     }
 

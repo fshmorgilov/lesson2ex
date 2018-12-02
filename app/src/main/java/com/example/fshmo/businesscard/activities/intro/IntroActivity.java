@@ -10,14 +10,13 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.activities.intro.fragments.IntroAboutFragment;
 import com.example.fshmo.businesscard.activities.intro.fragments.IntroDetailsFragment;
 import com.example.fshmo.businesscard.activities.intro.fragments.IntroMainFragment;
-import com.example.fshmo.businesscard.activities.NewsFeedActivity;
+import com.example.fshmo.businesscard.activities.main.NewsFeedActivity;
 
 public class IntroActivity extends FragmentActivity {
 
@@ -27,28 +26,25 @@ public class IntroActivity extends FragmentActivity {
     public static final String SHARED_PREF_NAME = "START_SHARED_PREF";
     public static final String KEY_STARTED = "BOOLEAN_KEY_STARTER";
 
-    private ImageView imageView;
     private ViewPager viewPager;
     private ScreenSlidePagerAdapter viewPagerAdapter;
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-        viewPager = findViewById(R.id.pager);
+        viewPager = findViewById(R.id.intro_pager);
         viewPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(viewPagerAdapter);
+        textView = findViewById(R.id.intro_main_text);
+        textView.setOnClickListener(v -> NewsFeedActivity.start(this));
 
         SharedPreferences preference = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         Log.i(LTAG, String.valueOf(preference.getBoolean(KEY_STARTED, true)));
 
         if (preference.getBoolean(KEY_STARTED, true)) {
             saveSharedPreferences(preference, false);
-            imageView = findViewById(R.id.intro_fragment_image_view);
-            imageView.setOnClickListener(v -> NewsFeedActivity.start(this));
-            Glide.with(this)
-                    .load(R.drawable.intro_screen)
-                    .into(imageView);
             Log.i(LTAG, "Showing Intro Activity");
         } else {
             saveSharedPreferences(preference, true);

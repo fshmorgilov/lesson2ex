@@ -1,23 +1,31 @@
-package com.example.fshmo.businesscard.activities;
+package com.example.fshmo.businesscard.activities.main;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.example.fshmo.businesscard.activities.about.AboutActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -45,10 +53,11 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class NewsFeedActivity extends AppCompatActivity {
+public class NewsFeedActivity extends Fragment {
 
     private static final String TAG = NewsFeedActivity.class.getCanonicalName();
 
+    private View fragmentMainView;
     private ProgressBar progressBar;
     private FrameLayout recyclerFrame;
     private View errorView;
@@ -77,15 +86,16 @@ public class NewsFeedActivity extends AppCompatActivity {
         activity.startActivity(intent);
     }
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_feed);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        fragmentMainView = inflater.inflate(R.layout.activity_news_feed, container, false);
         newsDao = AppDatabase.getInstance(this).newsDao();
         initializeViews();
         configuresViews();
         showState(State.HasData);
         observeDb();
+        return fragmentMainView;
     }
 
     @Override
@@ -119,26 +129,26 @@ public class NewsFeedActivity extends AppCompatActivity {
 
     private void initializeViews() {
         Log.i(TAG, "Initializing...");
-        errorNoData = findViewById(R.id.view_no_data);
-        errorView = findViewById(R.id.view_error);
-        retryBtn = findViewById(R.id.btn_retry_error);
-        fab = findViewById(R.id.fab);
-        recyclerFrame = findViewById(R.id.recycler_frame);
-        alertBuilder = new AlertDialog.Builder(this);
+        errorNoData = fragmentMainView.findViewById(R.id.view_no_data);
+        errorView = fragmentMainView.findViewById(R.id.view_error);
+        retryBtn = fragmentMainView.findViewById(R.id.btn_retry_error);
+        fab = fragmentMainView.findViewById(R.id.fab);
+        recyclerFrame = fragmentMainView.findViewById(R.id.recycler_frame);
+        alertBuilder = new AlertDialog.Builder(getContext());
 
-        progressBar = findViewById(R.id.progress_bar);
+        progressBar = fragmentMainView.findViewById(R.id.progress_bar);
         progressBar.setProgress(0);
-        toolbar = findViewById(R.id.feed_toolbar);
+        toolbar = fragmentMainView.findViewById(R.id.feed_toolbar);
 
         orientation = this.getResources().getConfiguration().orientation;
-        RequestManager glide = Glide.with(this);
-        recyclerView = findViewById(R.id.recycler_view);
+        RequestManager glide = Glide.with(getContext());
+        recyclerView = fragmentMainView.findViewById(R.id.recycler_view);
         adapter = new NewsFeedAdapter(
                 newsItems,
                 glide,
                 item -> {
                     Log.e(TAG, "News item selected: " + item.getTitle());
-                    NewsDetailsActivity.start(NewsFeedActivity.this, item);
+                    NewsDetailsFragment.start(getActivity(), item);
                 });
         decoration = new GridSpaceItemDecoration(4, 4);
         Log.i(TAG, "Initializing done");
@@ -149,9 +159,9 @@ public class NewsFeedActivity extends AppCompatActivity {
 
         recyclerView.setHasFixedSize(true);
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            layoutManager = new LinearLayoutManager(this);
+            layoutManager = new LinearLayoutManager(getActivity());
         } else
-            layoutManager = new GridLayoutManager(this, 2);
+            layoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
@@ -189,7 +199,7 @@ public class NewsFeedActivity extends AppCompatActivity {
                         .subscribe(
                                 newsEntities -> {
                                     newsDao.deleteAll();
-                                    progressStep = 100/newsEntities.length;
+                                    progressStep = 100 / newsEntities.length;
                                     newsDao.insertAll(newsEntities);
                                 },
                                 this::logItemError
@@ -257,9 +267,9 @@ public class NewsFeedActivity extends AppCompatActivity {
         Log.i(TAG, "Showing state: " + state.name());
     }
 
-    private void manageFab(State state){
+    private void manageFab(State state) {
         if (state == State.HasData
-                || state == State.NetworkError){
+                || state == State.NetworkError) {
             fab.setEnabled(true);
             fab.setClickable(true);
             fab.setAlpha(1.0f);
@@ -274,20 +284,15 @@ public class NewsFeedActivity extends AppCompatActivity {
         adapter.setDataset(newsItems);
     }
 
-    private void displayNews(){
+    private void displayNews() {
         showState(State.Loading);
         loadToDb();
         observeDb();
-        Toast.makeText(this, "Displaying news", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Displaying news", Toast.LENGTH_LONG).show();
         showState(State.HasData);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.feed_menu, menu);
-        return true;
-    }
+    //TODO MEnu inflater
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -296,7 +301,7 @@ public class NewsFeedActivity extends AppCompatActivity {
                 alertBuilder.show();
                 return true;
             case R.id.about:
-                AboutActivity.start(NewsFeedActivity.this);
+                AboutActivity.start(getActivity());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

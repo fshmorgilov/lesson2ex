@@ -1,4 +1,4 @@
-package com.example.fshmo.businesscard.activities;
+package com.example.fshmo.businesscard.activities.main;
 
 
 import androidx.annotation.NonNull;

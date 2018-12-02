@@ -16,11 +16,11 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".activities.AboutActivity"
+            android:name=".activities.about.AboutActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity android:name=".activities.NewsFeedActivity" />
+        <activity android:name=".activities.main.NewsFeedActivity" />
         <activity
-            android:name=".activities.NewsDetailsActivity"
+            android:name=".activities.main.NewsDetailsFragment"
             android:label="@string/title_activity_news_details"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.intro.IntroActivity">
@@ -29,6 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.main.MainActivity" />
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.example.fshmo.businesscard.activities;
+package com.example.fshmo.businesscard.activities.about;
 
 import android.app.Activity;
 import android.content.Intent;

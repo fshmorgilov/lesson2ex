@@ -44,8 +44,8 @@ dependencies {
     api "com.squareup.retrofit2:converter-gson:2.4.0"
     //ROOM
     def room_version = "2.1.0-alpha02"
-    implementation 'androidx.room:room-runtime:2.1.0-alpha02'
-    annotationProcessor 'androidx.room:room-compiler:2.1.0-alpha02' // use kapt for Kotlin
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
 
     // optional - RxJava support for Room
     implementation 'androidx.room:room-rxjava2:2.1.0-alpha02'

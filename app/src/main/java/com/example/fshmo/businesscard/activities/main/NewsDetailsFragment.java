@@ -23,6 +23,7 @@ import com.example.fshmo.businesscard.utils.NewsItemHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,8 +51,16 @@ public class NewsDetailsFragment extends Fragment {
     private WebView webView;
     private NewsItem newsItem;
     private ScrollView newsItemDetailsScroll;
-    private Disposable findNewsItemSubscription;
-    private Disposable deleteItemSubscription;
+    private Disposable findNewsItemDisposable;
+    private Disposable deleteNewsItemDisposable;
+
+
+    public static void newInstance(@NonNull int newsItemId){
+        NewsDetailsFragment fragment = new NewsDetailsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt(KEY_TEXT, newsItemId);
+        fragment.setArguments(bundle);
+    }
 
     public static void start(@NonNull Activity activity,
                              @NonNull NewsItem newsItem) {
@@ -92,8 +101,8 @@ public class NewsDetailsFragment extends Fragment {
     }
 
     private void deleteNewsItem(int id) {
-        deleteDisposable = Maybe.just(true)
-                .doOnSuccess(boo -> AppDatabase.getInstance(this).newsDao().deleteById(id))
+        deleteNewsItemDisposable = Maybe.just(true)
+                .doOnSuccess(boo -> AppDatabase.getInstance(getContext()).newsDao().deleteById(id))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -101,7 +110,7 @@ public class NewsDetailsFragment extends Fragment {
                         (e) -> Log.e(TAG, "onOptionsItemSelected: error deleting item" + e.getMessage())
                 );
         Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
-        finish();
+        getFragmentManager().popBackStack();
     }
 
     private void initializeViews() {
@@ -120,9 +129,9 @@ public class NewsDetailsFragment extends Fragment {
 
     private void findNewsItem() {
         int newsItemId;
-        newsItemId = ((NewsItem) getIntent().getSerializableExtra(KEY_TEXT)).getId();
+        newsItemId = getArguments().getInt(KEY_TEXT);
         Log.i(TAG, "findNewsItem: newsItem id:" + String.valueOf(newsItemId));
-        findNewsItemSubscription = AppDatabase.getInstance(getActivity()).newsDao().findById(newsItemId)
+        findNewsItemDisposable = AppDatabase.getInstance(getActivity()).newsDao().findById(newsItemId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(entity -> {
@@ -139,8 +148,8 @@ public class NewsDetailsFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        findNewsItemSubscription.dispose();
-        deleteItemSubscription.dispose();
+        findNewsItemDisposable.dispose();
+        deleteNewsItemDisposable.dispose();
         super.onDestroy();
     }
 

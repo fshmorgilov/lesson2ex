@@ -12,7 +12,6 @@ import com.example.fshmo.businesscard.activities.about.AboutActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,8 +20,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,9 +50,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class NewsFeedActivity extends Fragment {
+public class NewsFeedFragment extends Fragment {
 
-    private static final String TAG = NewsFeedActivity.class.getCanonicalName();
+    private static final String TAG = NewsFeedFragment.class.getCanonicalName();
 
     private View fragmentMainView;
     private ProgressBar progressBar;
@@ -82,7 +79,7 @@ public class NewsFeedActivity extends Fragment {
     private NewsDao newsDao;
 
     public static void start(Activity activity) {
-        Intent intent = new Intent(activity, NewsFeedActivity.class);
+        Intent intent = new Intent(activity, NewsFeedFragment.class);
         activity.startActivity(intent);
     }
 

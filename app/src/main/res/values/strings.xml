@@ -42,4 +42,5 @@
         <item>obituaries</item>
         <item>nsider</item>
     </array>
+    <string name="title_activity_news_main">NewsMainActivity</string>
 </resources>

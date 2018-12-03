@@ -1,6 +1,7 @@
 package com.example.fshmo.businesscard.activities.main;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -77,31 +78,51 @@ public class NewsFeedFragment extends Fragment {
     private Disposable disposable;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private NewsDao newsDao;
+    private MainFragmentListener listener;
 
+    public static Fragment newInstance() {
+        return new NewsFeedFragment();
+    }
+
+    //fixme выпилить
     public static void start(Activity activity) {
         Intent intent = new Intent(activity, NewsFeedFragment.class);
         activity.startActivity(intent);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (getActivity() instanceof MainFragmentListener) {
+            listener = (MainFragmentListener) getActivity();
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
+    public void onResume() {
+        Log.i(TAG, "onAttach: reattached...");
+        if (newsItems != null)
+            newsItems.clear();
+        observeDb();
+        adapter.notifyDataSetChanged();
+        super.onResume();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         fragmentMainView = inflater.inflate(R.layout.activity_news_feed, container, false);
-        newsDao = AppDatabase.getInstance(this).newsDao();
+        newsDao = AppDatabase.getInstance(getContext()).newsDao();
         initializeViews();
         configuresViews();
         showState(State.HasData);
         observeDb();
         return fragmentMainView;
-    }
-
-    @Override
-    protected void onRestart() {
-        Log.i(TAG, "onRestart: resuming...");
-        newsItems.clear();
-        observeDb();
-        adapter.notifyDataSetChanged();
-        super.onRestart();
     }
 
     private void observeDb() {
@@ -116,13 +137,14 @@ public class NewsFeedFragment extends Fragment {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         progressBarProgress = 0;
         if (disposable != null)
             disposable.dispose();
         DataCache.invalidateNewsCache();
         super.onDestroy();
     }
+
 
     private void initializeViews() {
         Log.i(TAG, "Initializing...");
@@ -145,7 +167,7 @@ public class NewsFeedFragment extends Fragment {
                 glide,
                 item -> {
                     Log.e(TAG, "News item selected: " + item.getTitle());
-                    NewsDetailsFragment.start(getActivity(), item);
+                    listener.onClicked(item);
                 });
         decoration = new GridSpaceItemDecoration(4, 4);
         Log.i(TAG, "Initializing done");
@@ -180,7 +202,7 @@ public class NewsFeedFragment extends Fragment {
         fab.setOnClickListener(v -> displayNews());
 
         toolbar.setTitle(this.categoryName.toUpperCase());
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar); fixme тулбар
 
         Log.i(TAG, "Configuring done");
     }

@@ -17,6 +17,7 @@ import com.example.fshmo.businesscard.activities.intro.fragments.IntroAboutFragm
 import com.example.fshmo.businesscard.activities.intro.fragments.IntroDetailsFragment;
 import com.example.fshmo.businesscard.activities.intro.fragments.IntroMainFragment;
 import com.example.fshmo.businesscard.activities.main.NewsFeedFragment;
+import com.example.fshmo.businesscard.activities.main.NewsMainActivity;
 
 public class IntroActivity extends FragmentActivity {
 
@@ -38,7 +39,7 @@ public class IntroActivity extends FragmentActivity {
         viewPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(viewPagerAdapter);
         textView = findViewById(R.id.intro_main_text);
-        textView.setOnClickListener(v -> NewsFeedFragment.start(this));
+        textView.setOnClickListener(v -> NewsMainActivity.start(this));
 
         SharedPreferences preference = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
         Log.i(LTAG, String.valueOf(preference.getBoolean(KEY_STARTED, true)));
@@ -49,7 +50,7 @@ public class IntroActivity extends FragmentActivity {
         } else {
             saveSharedPreferences(preference, true);
             Log.i(LTAG, "Showing Feed Activity");
-            NewsFeedFragment.start(this);
+            NewsMainActivity.start(this);
         }
     }
 
@@ -71,7 +72,7 @@ public class IntroActivity extends FragmentActivity {
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 
-        public ScreenSlidePagerAdapter(FragmentManager fm) {
+        ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }
 

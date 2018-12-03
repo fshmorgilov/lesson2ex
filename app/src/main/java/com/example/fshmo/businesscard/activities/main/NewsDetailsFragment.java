@@ -1,7 +1,5 @@
 package com.example.fshmo.businesscard.activities.main;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +21,6 @@ import com.example.fshmo.businesscard.utils.NewsItemHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,20 +50,15 @@ public class NewsDetailsFragment extends Fragment {
     private ScrollView newsItemDetailsScroll;
     private Disposable findNewsItemDisposable;
     private Disposable deleteNewsItemDisposable;
+    private MainFragmentListener mainFragmentListener;
 
 
-    public static void newInstance(@NonNull int newsItemId){
+    static NewsDetailsFragment newInstance(@NonNull int newsItemId) {
         NewsDetailsFragment fragment = new NewsDetailsFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_TEXT, newsItemId);
         fragment.setArguments(bundle);
-    }
-
-    public static void start(@NonNull Activity activity,
-                             @NonNull NewsItem newsItem) {
-        Intent intent = new Intent(activity, NewsDetailsFragment.class);
-        intent.putExtra(KEY_TEXT, newsItem);
-        activity.startActivity(intent);
+        return fragment;
     }
 
     @Override
@@ -84,7 +76,7 @@ public class NewsDetailsFragment extends Fragment {
                     deleteNewsItem(newsItem.getId());
                 } else {
                     Log.i(TAG, "onOptionsItemSelected: newsItemIsNull");
-                    getFragmentManager().popBackStack();
+                    goBack();
                 }
                 break;
         }
@@ -95,8 +87,10 @@ public class NewsDetailsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         fragmentMainView = inflater.inflate(R.layout.activity_news_details, container, false);
+        mainFragmentListener = (MainFragmentListener) getActivity();
         initializeViews();
         findNewsItem();
+
         return fragmentMainView;
     }
 
@@ -110,7 +104,11 @@ public class NewsDetailsFragment extends Fragment {
                         (e) -> Log.e(TAG, "onOptionsItemSelected: error deleting item" + e.getMessage())
                 );
         Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
-        getFragmentManager().popBackStack();
+        goBack();
+    }
+    private void goBack(){
+        Log.i(TAG, "goBack: backstack triggered");
+        mainFragmentListener.goToFeed();
     }
 
     private void initializeViews() {
@@ -119,12 +117,12 @@ public class NewsDetailsFragment extends Fragment {
         this.fullTextView = fragmentMainView.findViewById(R.id.full_text_nd);
         this.publishDateView = fragmentMainView.findViewById(R.id.publish_date_nd);
         this.titleView = fragmentMainView.findViewById(R.id.title_nd);
-        this.toolbar = fragmentMainView.findViewById(R.id.my_toolbar);
+        this.toolbar = fragmentMainView.findViewById(R.id.details_toolbar);
         this.errorImageView = fragmentMainView.findViewById(R.id.error_image_view);
         this.newsItemDetailsScroll = fragmentMainView.findViewById(R.id.news_item_details);
-//        fragmentMainView.setSupportActionBar(this.toolbar);
+        setHasOptionsMenu(true);
         toolbar.setNavigationIcon(R.drawable.ic_toolbar_back);
-        toolbar.setNavigationOnClickListener(v -> getFragmentManager().popBackStack());
+        toolbar.setNavigationOnClickListener(v -> goBack());
     }
 
     private void findNewsItem() {

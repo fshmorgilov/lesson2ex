@@ -2,7 +2,6 @@ package com.example.fshmo.businesscard.activities.main;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
@@ -45,6 +44,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -55,18 +57,26 @@ public class NewsFeedFragment extends Fragment {
 
     private static final String TAG = NewsFeedFragment.class.getCanonicalName();
 
+    @BindView(R.id.recycler_frame)
+    FrameLayout recyclerFrame;
+    @BindView(R.id.view_error)
+    View errorView;
+    @BindView(R.id.view_no_data)
+    View errorNoData;
+    @BindView(R.id.btn_retry_error)
+    Button retryBtn;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.feed_toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
     private View fragmentMainView;
-    private ProgressBar progressBar;
-    private FrameLayout recyclerFrame;
-    private View errorView;
-    private View errorNoData;
-    private Button retryBtn;
-    private FloatingActionButton fab;
-    private RecyclerView recyclerView;
     private NewsFeedAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.ItemDecoration decoration;
-    private Toolbar toolbar;
     private AlertDialog.Builder alertBuilder;
 
     private List<NewsItem> newsItems = new ArrayList<>();
@@ -79,15 +89,10 @@ public class NewsFeedFragment extends Fragment {
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private NewsDao newsDao;
     private MainFragmentListener listener;
+    private Unbinder unbinder;
 
     public static Fragment newInstance() {
         return new NewsFeedFragment();
-    }
-
-    //fixme выпилить
-    public static void start(Activity activity) {
-        Intent intent = new Intent(activity, NewsFeedFragment.class);
-        activity.startActivity(intent);
     }
 
     @Override
@@ -106,11 +111,19 @@ public class NewsFeedFragment extends Fragment {
     @Override
     public void onResume() {
         Log.i(TAG, "onAttach: reattached...");
+        clearNewsItems();
+        observeDb();
+        notifyDatasetChanged();
+        super.onResume();
+    }
+
+    private void notifyDatasetChanged() {
+        adapter.notifyDataSetChanged();
+    }
+
+    private void clearNewsItems() {
         if (newsItems != null)
             newsItems.clear();
-        observeDb();
-        adapter.notifyDataSetChanged();
-        super.onResume();
     }
 
     @Nullable
@@ -118,11 +131,19 @@ public class NewsFeedFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         fragmentMainView = inflater.inflate(R.layout.activity_news_feed, container, false);
         newsDao = AppDatabase.getInstance(getContext()).newsDao();
-        initializeViews();
+        unbinder = ButterKnife.bind(this, fragmentMainView);
+        initialize();
         configuresViews();
         showState(State.HasData);
         observeDb();
         return fragmentMainView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        unbinder.unbind();
+        compositeDisposable.dispose();
+        super.onDestroyView();
     }
 
     private void observeDb() {
@@ -138,30 +159,17 @@ public class NewsFeedFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        progressBarProgress = 0;
-        if (disposable != null)
-            disposable.dispose();
         DataCache.invalidateNewsCache();
         super.onDestroy();
     }
 
-
-    private void initializeViews() {
+    private void initialize() {
         Log.i(TAG, "Initializing...");
-        errorNoData = fragmentMainView.findViewById(R.id.view_no_data);
-        errorView = fragmentMainView.findViewById(R.id.view_error);
-        retryBtn = fragmentMainView.findViewById(R.id.btn_retry_error);
-        fab = fragmentMainView.findViewById(R.id.fab);
-        recyclerFrame = fragmentMainView.findViewById(R.id.recycler_frame);
         alertBuilder = new AlertDialog.Builder(getContext());
-
-        progressBar = fragmentMainView.findViewById(R.id.progress_bar);
         progressBar.setProgress(0);
-        toolbar = fragmentMainView.findViewById(R.id.feed_toolbar);
 
         orientation = this.getResources().getConfiguration().orientation;
         RequestManager glide = Glide.with(getContext());
-        recyclerView = fragmentMainView.findViewById(R.id.recycler_view);
         adapter = new NewsFeedAdapter(
                 newsItems,
                 glide,
@@ -177,10 +185,11 @@ public class NewsFeedFragment extends Fragment {
         Log.i(TAG, "Configuring...");
 
         recyclerView.setHasFixedSize(true);
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (orientation == Configuration.ORIENTATION_PORTRAIT || NewsMainActivity.isTablet(getContext())) {
             layoutManager = new LinearLayoutManager(getActivity());
-        } else
+        } else {
             layoutManager = new GridLayoutManager(getActivity(), 2);
+        }
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
@@ -233,7 +242,7 @@ public class NewsFeedFragment extends Fragment {
         }
     }
 
-    public void showState(@NonNull State state) {
+    private void showState(@NonNull State state) {
         switch (state) {
             case HasData:
                 recyclerView.setVisibility(View.VISIBLE);
@@ -283,10 +292,16 @@ public class NewsFeedFragment extends Fragment {
 
         }
         manageFab(state);
+        manageToolbar();
         Log.i(TAG, "Showing state: " + state.name());
     }
 
     private void manageFab(State state) {
+        if (NewsMainActivity.isTablet(getContext())) {
+            fab.setEnabled(false);
+            fab.setClickable(false);
+            fab.setAlpha(0.3f);
+        }
         if (state == State.HasData
                 || state == State.NetworkError) {
             fab.setEnabled(true);
@@ -299,6 +314,11 @@ public class NewsFeedFragment extends Fragment {
         }
     }
 
+    private void manageToolbar() {
+        if (NewsMainActivity.isTablet(getContext()))
+            toolbar.setVisibility(View.GONE);
+    }
+
     private void showItems(@NonNull List<NewsItem> newsItems) {
         adapter.setDataset(newsItems);
     }
@@ -309,6 +329,12 @@ public class NewsFeedFragment extends Fragment {
         observeDb();
         Toast.makeText(getContext(), "Displaying news", Toast.LENGTH_LONG).show();
         showState(State.HasData);
+    }
+
+    public void reloadFromDb() {
+        clearNewsItems();
+        observeDb();
+        notifyDatasetChanged();
     }
 
     //TODO MEnu inflater

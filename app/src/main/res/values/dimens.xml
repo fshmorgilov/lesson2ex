@@ -20,4 +20,6 @@
     <dimen name="card_view_margin">8dp</dimen>
     <dimen name="toolbar_height">58dp</dimen>
     <dimen name="floating_button_margin">16dp</dimen>
+    <dimen name="main_frame_tablet_weight">400dp</dimen>
+    <dimen name="details_pickture_height">300dp</dimen>
 </resources>

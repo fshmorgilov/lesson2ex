@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.main.NewsMainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/main_feed_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/news_main_frame"
+        android:layout_width="@dimen/main_frame_tablet_weight"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        tools:context=".activities.main.NewsMainActivity"
+        tools:showIn="@layout/activity_news_main" />
+
+    <FrameLayout
+        android:id="@+id/news_additional_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/news_main_frame">
+
+        <TextView
+            android:id="@+id/additional_frame_empty_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/select_news_item" />
+    </FrameLayout>
+
+</RelativeLayout>

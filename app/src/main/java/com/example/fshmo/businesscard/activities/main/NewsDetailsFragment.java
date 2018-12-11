@@ -1,5 +1,6 @@
 package com.example.fshmo.businesscard.activities.main;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,7 +52,17 @@ public class NewsDetailsFragment extends Fragment {
     private Disposable findNewsItemDisposable;
     private Disposable deleteNewsItemDisposable;
     private MainFragmentListener mainFragmentListener;
+    private TextView selectItem;
+    private MainFragmentListener listener;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        super.onAttach(context);
+        if (getActivity() instanceof MainFragmentListener) {
+            listener = (MainFragmentListener) getActivity();
+        }
+    }
 
     static NewsDetailsFragment newInstance(@NonNull int newsItemId) {
         NewsDetailsFragment fragment = new NewsDetailsFragment();
@@ -90,7 +101,6 @@ public class NewsDetailsFragment extends Fragment {
         mainFragmentListener = (MainFragmentListener) getActivity();
         initializeViews();
         findNewsItem();
-
         return fragmentMainView;
     }
 
@@ -106,7 +116,8 @@ public class NewsDetailsFragment extends Fragment {
         Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
         goBack();
     }
-    private void goBack(){
+
+    private void goBack() {
         Log.i(TAG, "goBack: backstack triggered");
         mainFragmentListener.goToFeed();
     }
@@ -117,12 +128,16 @@ public class NewsDetailsFragment extends Fragment {
         this.fullTextView = fragmentMainView.findViewById(R.id.full_text_nd);
         this.publishDateView = fragmentMainView.findViewById(R.id.publish_date_nd);
         this.titleView = fragmentMainView.findViewById(R.id.title_nd);
-        this.toolbar = fragmentMainView.findViewById(R.id.details_toolbar);
         this.errorImageView = fragmentMainView.findViewById(R.id.error_image_view);
         this.newsItemDetailsScroll = fragmentMainView.findViewById(R.id.news_item_details);
-        setHasOptionsMenu(true);
-        toolbar.setNavigationIcon(R.drawable.ic_toolbar_back);
-        toolbar.setNavigationOnClickListener(v -> goBack());
+        this.selectItem = fragmentMainView.findViewById(R.id.select_item);
+        this.toolbar = fragmentMainView.findViewById(R.id.details_toolbar);
+        if (!NewsMainActivity.isTablet(getContext())) {
+            setHasOptionsMenu(true);
+            toolbar.setNavigationIcon(R.drawable.ic_toolbar_back);
+            toolbar.setNavigationOnClickListener(v -> goBack());
+        } else
+            toolbar.setVisibility(View.GONE);
     }
 
     private void findNewsItem() {
@@ -147,7 +162,8 @@ public class NewsDetailsFragment extends Fragment {
     @Override
     public void onDestroy() {
         findNewsItemDisposable.dispose();
-        deleteNewsItemDisposable.dispose();
+        if (deleteNewsItemDisposable != null)
+            deleteNewsItemDisposable.dispose();
         super.onDestroy();
     }
 
@@ -157,12 +173,14 @@ public class NewsDetailsFragment extends Fragment {
                 webView.setVisibility(View.GONE);
                 newsItemDetailsScroll.setVisibility(View.VISIBLE);
                 errorImageView.setVisibility(View.GONE);
+                selectItem.setVisibility(View.GONE);
                 break;
 
             case HasNoData:
                 webView.setVisibility(View.GONE);
                 newsItemDetailsScroll.setVisibility(View.GONE);
                 errorImageView.setVisibility(View.VISIBLE);
+                selectItem.setVisibility(View.GONE);
 
                 Glide.with(getActivity())
                         .load("https://www.oddee.com/wp-content/uploads/_media/imgs/articles2/a96984_e1.jpg")
@@ -173,7 +191,15 @@ public class NewsDetailsFragment extends Fragment {
                 webView.setVisibility(View.VISIBLE);
                 newsItemDetailsScroll.setVisibility(View.GONE);
                 errorImageView.setVisibility(View.GONE);
+                selectItem.setVisibility(View.GONE);
                 break;
+
+            case Loading:
+                webView.setVisibility(View.GONE);
+                newsItemDetailsScroll.setVisibility(View.GONE);
+                errorImageView.setVisibility(View.GONE);
+                selectItem.setVisibility(View.VISIBLE);
+
         }
     }
 

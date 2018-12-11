@@ -14,7 +14,7 @@
         android:background="@color/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:titleTextColor="#ffffff" />
+        app:titleTextColor="#ffffff"/>
 
     <Button
         android:id="@+id/category_selector_btn"

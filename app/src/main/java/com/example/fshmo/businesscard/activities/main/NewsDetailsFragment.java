@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.fshmo.businesscard.R;
+import com.example.fshmo.businesscard.activities.main.exceptions.DetailsFragmentIsEmptyException;
 import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.data.model.AppDatabase;
 import com.example.fshmo.businesscard.utils.NewsItemHelper;
@@ -83,12 +84,12 @@ public class NewsDetailsFragment extends Fragment {
         //TODO переделать в кнопку
         switch (item.getItemId()) {
             case (R.id.delete_news_item):
-                if (newsItem != null) {
-                    deleteNewsItem(newsItem.getId());
-                } else {
-                    Log.i(TAG, "onOptionsItemSelected: newsItemIsNull");
-                    goBack();
+                try {
+                    deleteNewsItem();
+                } catch (DetailsFragmentIsEmptyException e) {
+                    Log.e(TAG, "onOptionsItemSelected: newsItemIsnull");
                 }
+                goBack();
                 break;
         }
         return true;
@@ -104,17 +105,22 @@ public class NewsDetailsFragment extends Fragment {
         return fragmentMainView;
     }
 
-    private void deleteNewsItem(int id) {
-        deleteNewsItemDisposable = Maybe.just(true)
-                .doOnSuccess(boo -> AppDatabase.getInstance(getContext()).newsDao().deleteById(id))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        aBoolean -> Log.i(TAG, "onOptionsItemSelected: deleted item: " + id),
-                        (e) -> Log.e(TAG, "onOptionsItemSelected: error deleting item" + e.getMessage())
-                );
-        Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
-        goBack();
+    public void deleteNewsItem() throws DetailsFragmentIsEmptyException {
+        if (newsItem == null) {
+            Log.e(TAG, "deleteNewsItem: no news item to delete");
+            throw new DetailsFragmentIsEmptyException();
+        } else {
+            int id = newsItem.getId();
+            deleteNewsItemDisposable = Maybe.just(true)
+                    .doOnSuccess(boo -> AppDatabase.getInstance(getContext()).newsDao().deleteById(id))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            aBoolean -> Log.i(TAG, "onOptionsItemSelected: deleted item: " + id),
+                            (e) -> Log.e(TAG, "onOptionsItemSelected: error deleting item" + e.getMessage())
+                    );
+            Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
+        }
     }
 
     private void goBack() {

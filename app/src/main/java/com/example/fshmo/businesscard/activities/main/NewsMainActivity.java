@@ -5,15 +5,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toolbar;
+
 
 import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.data.NewsItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import butterknife.Unbinder;
 
 public class NewsMainActivity extends AppCompatActivity implements MainFragmentListener {
@@ -43,12 +46,12 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(isTablet(this)) {
+        setContentView(R.layout.activity_news_main);
+        if (isTablet(this)) {
             toolbar = findViewById(R.id.main_feed_toolbar);
-            setActionBar(toolbar);
+            setSupportActionBar(toolbar);
             manageToolbar(isTablet(this));
         }
-        setContentView(R.layout.activity_news_main);
         initializeFragments(isTablet(getApplicationContext()));
     }
 
@@ -93,5 +96,24 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.news_main_frame, newsFeedFragment)
                 .commit();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.tablet_about:
+                break;
+            case R.id.tablet_category_selector:
+                break;
+            case  R.id.tablet_delete_news_item:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.tablet_main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }

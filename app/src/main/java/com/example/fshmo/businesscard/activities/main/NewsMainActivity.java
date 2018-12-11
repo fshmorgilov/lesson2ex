@@ -66,7 +66,6 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
 
     @Override
     protected void onDestroy() {
-        unbinder.unbind();
         super.onDestroy();
     }
 
@@ -103,15 +102,16 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        NewsDetailsFragment detailsFragment = (NewsDetailsFragment) getSupportFragmentManager().findFragmentByTag(DETAILS_TAG);
+        NewsFeedFragment feedFragment = (NewsFeedFragment) getSupportFragmentManager().findFragmentByTag(FEED_TAG);
         switch (item.getItemId()) {
             case R.id.tablet_about:
                 AboutActivity.start(this);
                 break;
             case R.id.tablet_category_selector:
+                feedFragment.selectCategory();
                 break;
             case R.id.tablet_delete_news_item:
-                NewsDetailsFragment detailsFragment = (NewsDetailsFragment) getSupportFragmentManager().findFragmentByTag(DETAILS_TAG);
-                NewsFeedFragment feedFragment = (NewsFeedFragment) getSupportFragmentManager().findFragmentByTag(FEED_TAG);
                 try {
                     int id = detailsFragment.delete();
                     getSupportFragmentManager().beginTransaction()

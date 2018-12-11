@@ -304,16 +304,17 @@ public class NewsFeedFragment extends Fragment {
             fab.setEnabled(false);
             fab.setClickable(false);
             fab.setAlpha(0.3f);
-        }
-        if (state == State.HasData
-                || state == State.NetworkError) {
-            fab.setEnabled(true);
-            fab.setClickable(true);
-            fab.setAlpha(1.0f);
         } else {
-            fab.setEnabled(false);
-            fab.setClickable(false);
-            fab.setAlpha(0.3f);
+            if (state == State.HasData
+                    || state == State.NetworkError) {
+                fab.setEnabled(true);
+                fab.setClickable(true);
+                fab.setAlpha(1.0f);
+            } else {
+                fab.setEnabled(false);
+                fab.setClickable(false);
+                fab.setAlpha(0.3f);
+            }
         }
     }
 
@@ -336,6 +337,11 @@ public class NewsFeedFragment extends Fragment {
 
     public void reload(int id) {
         adapter.notifyItemRemoved(id);
+        Log.i(TAG, "reload: removed item" + id);
+    }
+
+    public void selectCategory(){
+        alertBuilder.show();
     }
 
     //TODO MEnu inflater

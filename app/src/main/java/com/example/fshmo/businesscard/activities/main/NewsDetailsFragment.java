@@ -81,7 +81,6 @@ public class NewsDetailsFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //TODO переделать в кнопку
         switch (item.getItemId()) {
             case (R.id.delete_news_item):
                 try {
@@ -106,7 +105,6 @@ public class NewsDetailsFragment extends Fragment {
     }
 
     public int delete() throws DetailsFragmentIsEmptyException {
-
         if (newsItem == null) {
             Log.e(TAG, "delete: no news item to delete");
             throw new DetailsFragmentIsEmptyException();

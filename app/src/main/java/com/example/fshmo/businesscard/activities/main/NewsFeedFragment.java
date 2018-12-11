@@ -1,6 +1,5 @@
 package com.example.fshmo.businesscard.activities.main;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -119,11 +118,15 @@ public class NewsFeedFragment extends Fragment {
 
     private void notifyDatasetChanged() {
         adapter.notifyDataSetChanged();
+        Log.i(TAG, "notifyDatasetChanged");
     }
 
     private void clearNewsItems() {
-        if (newsItems != null)
+        if (newsItems != null) {
+            int size = newsItems.size();
             newsItems.clear();
+            Log.i(TAG, "clearNewsItems: cleared " + String.valueOf(size) + " items");
+        }
     }
 
     @Nullable
@@ -153,7 +156,7 @@ public class NewsFeedFragment extends Fragment {
                         .map(NewsItemHelper::convertDaoListoToDomain)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::showItems)
+                        .subscribe(this::resetDataset)
         );
     }
 
@@ -319,7 +322,7 @@ public class NewsFeedFragment extends Fragment {
             toolbar.setVisibility(View.GONE);
     }
 
-    private void showItems(@NonNull List<NewsItem> newsItems) {
+    private void resetDataset(@NonNull List<NewsItem> newsItems) {
         adapter.setDataset(newsItems);
     }
 
@@ -331,10 +334,8 @@ public class NewsFeedFragment extends Fragment {
         showState(State.HasData);
     }
 
-    public void reloadFromDb() {
-        clearNewsItems();
-        observeDb();
-        notifyDatasetChanged();
+    public void reload(int id) {
+        adapter.notifyItemRemoved(id);
     }
 
     //TODO MEnu inflater

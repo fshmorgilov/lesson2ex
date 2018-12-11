@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 
 import com.example.fshmo.businesscard.R;
+import com.example.fshmo.businesscard.activities.about.AboutActivity;
+import com.example.fshmo.businesscard.activities.main.exceptions.DetailsFragmentIsEmptyException;
 import com.example.fshmo.businesscard.data.NewsItem;
 
 import androidx.annotation.NonNull;
@@ -21,7 +23,8 @@ import butterknife.Unbinder;
 
 public class NewsMainActivity extends AppCompatActivity implements MainFragmentListener {
 
-    private static final String FEED_TAG = "News Feed Main Fragment";
+    private static final String FEED_TAG = "feedFragment";
+    private static final String DETAILS_TAG = "detailsFragment";
 
     private TextView textView;
     private Unbinder unbinder;
@@ -71,7 +74,7 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
     public void onClicked(@NonNull NewsItem newsItem) {
         NewsDetailsFragment detailsFragment = NewsDetailsFragment.newInstance(newsItem.getId());
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.news_additional_frame, detailsFragment)
+                .replace(R.id.news_additional_frame, detailsFragment, DETAILS_TAG)
                 .commit();
         if (textView != null)
             textView.setVisibility(View.GONE);
@@ -94,18 +97,32 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
     private void initializeFeedFragment() {
         NewsFeedFragment newsFeedFragment = new NewsFeedFragment();
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.news_main_frame, newsFeedFragment)
+                .add(R.id.news_main_frame, newsFeedFragment, FEED_TAG)
                 .commit();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.tablet_about:
+                AboutActivity.start(this);
                 break;
             case R.id.tablet_category_selector:
                 break;
-            case  R.id.tablet_delete_news_item:
+            case R.id.tablet_delete_news_item:
+                NewsDetailsFragment detailsFragment = (NewsDetailsFragment) getSupportFragmentManager().findFragmentByTag(DETAILS_TAG);
+                NewsFeedFragment feedFragment = (NewsFeedFragment) getSupportFragmentManager().findFragmentByTag(FEED_TAG);
+                try {
+                    int id = detailsFragment.delete();
+                    getSupportFragmentManager().beginTransaction()
+                            .remove(detailsFragment)
+                            .commit();
+                    feedFragment.reload(id);
+                    this.textView.setVisibility(View.VISIBLE);
+                } catch (DetailsFragmentIsEmptyException e) {
+
+                    //TODO show state
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -115,5 +132,14 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tablet_main_menu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void showAdditionalFrameState(State state) {
+        switch (state) {
+            case HasData:
+                break;
+            case HasNoData:
+                break;
+        }
     }
 }

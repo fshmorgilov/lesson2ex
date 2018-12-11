@@ -85,7 +85,7 @@ public class NewsDetailsFragment extends Fragment {
         switch (item.getItemId()) {
             case (R.id.delete_news_item):
                 try {
-                    deleteNewsItem();
+                    delete();
                 } catch (DetailsFragmentIsEmptyException e) {
                     Log.e(TAG, "onOptionsItemSelected: newsItemIsnull");
                 }
@@ -105,9 +105,10 @@ public class NewsDetailsFragment extends Fragment {
         return fragmentMainView;
     }
 
-    public void deleteNewsItem() throws DetailsFragmentIsEmptyException {
+    public int delete() throws DetailsFragmentIsEmptyException {
+
         if (newsItem == null) {
-            Log.e(TAG, "deleteNewsItem: no news item to delete");
+            Log.e(TAG, "delete: no news item to delete");
             throw new DetailsFragmentIsEmptyException();
         } else {
             int id = newsItem.getId();
@@ -120,6 +121,7 @@ public class NewsDetailsFragment extends Fragment {
                             (e) -> Log.e(TAG, "onOptionsItemSelected: error deleting item" + e.getMessage())
                     );
             Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
+            return id;
         }
     }
 

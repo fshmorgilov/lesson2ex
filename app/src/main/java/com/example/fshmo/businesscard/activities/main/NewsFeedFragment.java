@@ -140,8 +140,7 @@ public class NewsFeedFragment extends Fragment {
 
     private void observeDb() {
         compositeDisposable.add(
-                Observable.just(true) //FIXME observable.fromCallable()
-                        .map(aBoolean -> newsDao.getAll())
+                newsDao.getAll()
                         .map(NewsItemHelper::convertDaoListoToDomain)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

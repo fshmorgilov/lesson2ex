@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-
 import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.activities.about.AboutActivity;
 import com.example.fshmo.businesscard.activities.main.exceptions.DetailsFragmentIsEmptyException;
@@ -19,7 +18,6 @@ import com.example.fshmo.businesscard.data.NewsItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import butterknife.Unbinder;
 
 public class NewsMainActivity extends AppCompatActivity implements MainFragmentListener {
 
@@ -27,7 +25,6 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
     private static final String DETAILS_TAG = "detailsFragment";
 
     private TextView textView;
-    private Unbinder unbinder;
     Toolbar toolbar;
 
 
@@ -50,6 +47,11 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_main);
+        if (savedInstanceState == null)
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.news_main_frame, NewsFeedFragment.newInstance())
+                    .addToBackStack(FEED_TAG)
+                    .commit();
         if (isTablet(this)) {
             toolbar = findViewById(R.id.main_feed_toolbar);
             setSupportActionBar(toolbar);

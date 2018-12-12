@@ -113,8 +113,7 @@ public class NewsFeedFragment extends Fragment {
     @Override
     public void onResume() {
         Log.i(TAG, "onAttach: reattached...");
-        clearNewsItems();
-        observeDb();
+//        observeDb();
         super.onResume();
     }
 
@@ -148,6 +147,7 @@ public class NewsFeedFragment extends Fragment {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(this::resetDataset)
         );
+        Log.i(TAG, "observeDb: Displaying news");
     }
 
     private void initialize() {

@@ -31,7 +31,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.activities.decorators.GridSpaceItemDecoration;
-import com.example.fshmo.businesscard.data.DataCache;
 import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.data.model.AppDatabase;
 import com.example.fshmo.businesscard.data.model.NewsDao;
@@ -107,27 +106,18 @@ public class NewsFeedFragment extends Fragment {
         super.onDetach();
     }
 
+    public void selectCategory() {
+        alertBuilder.show();
+    }
+
     @Override
     public void onResume() {
         Log.i(TAG, "onAttach: reattached...");
         clearNewsItems();
         observeDb();
-        notifyDatasetChanged();
         super.onResume();
     }
 
-    private void notifyDatasetChanged() {
-        adapter.notifyDataSetChanged();
-        Log.i(TAG, "notifyDatasetChanged");
-    }
-
-    private void clearNewsItems() {
-        if (newsItems != null) {
-            int size = newsItems.size();
-            newsItems.clear();
-            Log.i(TAG, "clearNewsItems: cleared " + String.valueOf(size) + " items");
-        }
-    }
 
     @Nullable
     @Override
@@ -151,19 +141,13 @@ public class NewsFeedFragment extends Fragment {
 
     private void observeDb() {
         compositeDisposable.add(
-                Observable.just(true)
+                Observable.just(true) //FIXME observable.fromCallable()
                         .map(aBoolean -> newsDao.getAll())
                         .map(NewsItemHelper::convertDaoListoToDomain)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(this::resetDataset)
         );
-    }
-
-    @Override
-    public void onDestroy() {
-        DataCache.invalidateNewsCache();
-        super.onDestroy();
     }
 
     private void initialize() {
@@ -203,9 +187,6 @@ public class NewsFeedFragment extends Fragment {
                         (dialog, which) -> {
                             this.categoryName = categoryNames[which];
                             toolbar.setTitle(this.categoryName.toUpperCase());
-                            int current_size = newsItems.size();
-                            this.newsItems.clear();
-                            adapter.notifyItemRangeRemoved(0, current_size);
                             displayNews();
                         }
                 );
@@ -294,16 +275,16 @@ public class NewsFeedFragment extends Fragment {
                 throw new IllegalArgumentException("Unknown state: " + state);
 
         }
-        manageFab(state);
-        manageToolbar();
+        manageFabState(state);
+        manageToolbarState();
         Log.i(TAG, "Showing state: " + state.name());
     }
 
-    private void manageFab(State state) {
+    private void manageFabState(State state) {
         if (NewsMainActivity.isTablet(getContext())) {
             fab.setEnabled(false);
             fab.setClickable(false);
-            fab.setAlpha(0.3f);
+            fab.setAlpha(0.0f);
         } else {
             if (state == State.HasData
                     || state == State.NetworkError) {
@@ -318,13 +299,17 @@ public class NewsFeedFragment extends Fragment {
         }
     }
 
-    private void manageToolbar() {
+    private void manageToolbarState() {
         if (NewsMainActivity.isTablet(getContext()))
             toolbar.setVisibility(View.GONE);
     }
 
     private void resetDataset(@NonNull List<NewsItem> newsItems) {
+        if (!this.newsItems.isEmpty()) {
+            clearNewsItems();
+        }
         adapter.setDataset(newsItems);
+        adapter.notifyItemRangeChanged(0, newsItems.size());
     }
 
     private void displayNews() {
@@ -336,12 +321,22 @@ public class NewsFeedFragment extends Fragment {
     }
 
     public void reload(int id) {
+        showState(State.Loading);
         adapter.notifyItemRemoved(id);
         Log.i(TAG, "reload: removed item" + id);
+        observeDb();
+        Toast.makeText(getContext(), "Renewing...", Toast.LENGTH_LONG).show();
+        showState(State.HasData);
     }
 
-    public void selectCategory(){
-        alertBuilder.show();
+
+    private void clearNewsItems() {
+        if (newsItems != null) {
+            int size = newsItems.size();
+            newsItems.clear();
+            adapter.notifyItemRangeRemoved(0, size);
+            Log.i(TAG, "clearNewsItems: cleared " + String.valueOf(size) + " items");
+        }
     }
 
     //TODO MEnu inflater

@@ -80,12 +80,19 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
     @Override
     public void onClicked(@NonNull NewsItem newsItem) {
         NewsDetailsFragment detailsFragment = NewsDetailsFragment.newInstance(newsItem.getId());
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.news_additional_frame, detailsFragment, DETAILS_TAG)
-                .addToBackStack(DETAILS_TAG)
-                .commit();
-        if (instructionTextView != null)
-            showAdditionalFrameState(State.HasData);
+        if (isTablet(this)) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.news_additional_frame, detailsFragment, DETAILS_TAG)
+                    .addToBackStack(DETAILS_TAG)
+                    .commit();
+            if (instructionTextView != null)
+                showAdditionalFrameState(State.HasData);
+        } else {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.news_main_frame, detailsFragment, DETAILS_TAG)
+                    .addToBackStack(DETAILS_TAG)
+                    .commit();
+        }
     }
 
     @Override

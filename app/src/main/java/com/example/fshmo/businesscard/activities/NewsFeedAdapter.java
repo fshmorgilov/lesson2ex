@@ -1,12 +1,15 @@
-package com.example.fshmo.businesscard;
+package com.example.fshmo.businesscard.activities;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.RequestManager;
+import com.example.fshmo.businesscard.data.NewsItem;
+import com.example.fshmo.businesscard.R;
 
 import java.util.List;
 
@@ -14,6 +17,7 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder> {
     private List<NewsItem> dataset;
     private OnItemClickListener onItemClickListener;
     private RequestManager glide;
+    private static final String LTAG = NewsFeedAdapter.class.getName();
 
     public interface OnItemClickListener {
         void onItemClick(@NonNull NewsItem item);
@@ -43,5 +47,18 @@ public class NewsFeedAdapter extends RecyclerView.Adapter<NewsFeedViewHolder> {
     @Override
     public int getItemCount() {
         return dataset.size();
+    }
+
+    public void addItem(@NonNull NewsItem item){
+        this.dataset.add(item);
+        notifyItemInserted(dataset.indexOf(item));
+    }
+
+    public void setDataset(@NonNull List<NewsItem> newsItems){
+        int currSize = this.dataset.size();
+        this.dataset.addAll(newsItems);
+        notifyItemRangeInserted(currSize + 1, newsItems.size());
+        Log.i(LTAG, "Dataset changed. Added: " + newsItems.size() + " items");
+
     }
 }

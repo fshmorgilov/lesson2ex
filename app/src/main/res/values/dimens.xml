@@ -19,4 +19,5 @@
     <dimen name="card_view_padding">6dp</dimen>
     <dimen name="card_view_margin">8dp</dimen>
     <dimen name="toolbar_height">58dp</dimen>
+    <dimen name="floating_button_margin">16dp</dimen>
 </resources>

@@ -1,9 +1,10 @@
-package com.example.fshmo.businesscard;
+package com.example.fshmo.businesscard.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.inputmethod.EditorInfo;
@@ -11,10 +12,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.fshmo.businesscard.R;
+
 public class AboutActivity extends AppCompatActivity {
 
     private static final String LTAG = AboutActivity.class.getName();
     private final String[] addresses = new String[]{"fshmorgilov@gmail.com"};
+
+    public static void start(Activity activity) {
+        Intent intent = new Intent(activity, AboutActivity.class);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

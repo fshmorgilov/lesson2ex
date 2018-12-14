@@ -1,8 +1,8 @@
-package com.example.fshmo.businesscard.decorators;
+package com.example.fshmo.businesscard.activities.decorators;
 
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 public class VerticalSpaceItemDecoration extends RecyclerView.ItemDecoration {

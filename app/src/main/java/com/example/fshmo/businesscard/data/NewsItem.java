@@ -1,0 +1,107 @@
+package com.example.fshmo.businesscard.data;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import android.util.Log;
+
+import com.example.fshmo.businesscard.data.model.NewsEntity;
+
+import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+public class NewsItem implements Serializable {
+
+    public static final String DATE_FORMAL_LONG = "EEE MMM dd HH:mm:ss zzz yyyy";
+    public static final String DATE_FORMAT = "HH:mm, EE";
+
+    private static final String TAG = NewsItem.class.getName();
+
+    private int id;
+    private final String title;
+    private final String imageUrl;
+    private final Category category;
+    private final String previewText;
+    private final String fullText;
+    private String imageUrlLarge;
+    private Date publishDate;
+    private String newsItemUrl;
+
+    public static final String PLACEHOLDER_IMG = "https://www.google.ru/search?q=news+place+holder+image&newwindow=1&tbm=isch&source=iu&ictx=1&fir=EfhmYKY75BM0sMhttps://www.google.ru/imgres?imgurl=http%3A%2F%2Fwww.asanet.org%2Fsites%2Fdefault%2Ffiles%2Fdefault_images%2Fplaceholder-news.jpg&imgrefurl=http%3A%2F%2Fwww.asanet.org%2Ffiles%2Fnews-placeholder&docid=jrPflO7vu5YFXM&tbnid=jOKqZCHNXXZbPM%3A&vet=10ahUKEwimoInPiKLeAhVnhosKHYYED_cQMwg4KAEwAQ..i&w=384&h=288&bih=716&biw=1371&q=news%20place%20holder%20image&ved=0ahUKEwimoInPiKLeAhVnhosKHYYED_cQMwg4KAEwAQ&iact=mrc&uact=8";
+
+    public NewsItem(@NonNull String title,
+                    @NonNull String imageUrl,
+                    @Nullable Category category,
+                    @Nullable Date publishDate,
+                    @Nullable String previewText,
+                    @Nullable String fullText) {
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.category = category;
+        this.publishDate = publishDate;
+        this.previewText = previewText;
+        this.fullText = fullText;
+    }
+
+    public NewsItem(@NonNull NewsEntity newsEntity) {
+        this.id = newsEntity.getId();
+        this.title = newsEntity.getTitle();
+        this.imageUrl = newsEntity.getImageUrl();
+        this.category = new Category(0, newsEntity.getCategory());
+        this.previewText = newsEntity.getPreviewText();
+        this.fullText = newsEntity.getPreviewText();
+        this.newsItemUrl = newsEntity.getNewsItemUrl();
+        try {
+            this.publishDate = new SimpleDateFormat(DATE_FORMAL_LONG, Locale.ENGLISH)
+                    .parse(newsEntity.getPublishDate());
+            Log.i(TAG, "Parsed: " + newsEntity.getPublishDate());
+        } catch (ParseException e) {
+            this.publishDate = new Date();
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public Date getPublishDate() {
+        return publishDate;
+    }
+
+    public String getPreviewText() {
+        return previewText;
+    }
+
+    public String getFullText() {
+        return fullText;
+    }
+
+    public String getNewsItemUrl() {
+        return newsItemUrl;
+    }
+
+    public String getImageUrlLarge() {
+        return imageUrlLarge;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return (obj instanceof NewsItem && getTitle().equals(((NewsItem) obj).getTitle()));
+    }
+}

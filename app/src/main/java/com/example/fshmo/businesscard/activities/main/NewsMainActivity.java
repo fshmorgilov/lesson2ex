@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,25 +16,30 @@ import com.example.fshmo.businesscard.activities.about.AboutActivity;
 import com.example.fshmo.businesscard.activities.main.exceptions.DetailsFragmentIsEmptyException;
 import com.example.fshmo.businesscard.data.NewsItem;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 public class NewsMainActivity extends AppCompatActivity implements MainFragmentListener {
+
+    private static final String TAG = NewsMainActivity.class.getName();
 
     private static final String FEED_TAG = "feedFragment";
     private static final String DETAILS_TAG = "detailsFragment";
 
-    private TextView textView;
+    private TextView instructionTextView;
     Toolbar toolbar;
 
 
-    public static void start(Activity activity) {
+    public static void start(@NonNull Activity activity) {
         Intent intent = new Intent(activity, NewsMainActivity.class);
         activity.startActivity(intent);
     }
 
-    public static boolean isTablet(Context context) {
+    public static boolean isTablet(@NonNull Context context) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
 
         double wInches = displayMetrics.widthPixels / (double) displayMetrics.densityDpi;
@@ -76,9 +82,10 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
         NewsDetailsFragment detailsFragment = NewsDetailsFragment.newInstance(newsItem.getId());
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.news_additional_frame, detailsFragment, DETAILS_TAG)
+                .addToBackStack(DETAILS_TAG)
                 .commit();
-        if (textView != null)
-            textView.setVisibility(View.GONE);
+        if (instructionTextView != null)
+            showAdditionalFrameState(State.HasData);
     }
 
     @Override
@@ -90,8 +97,8 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
     private void initializeFragments(boolean isTablet) {
         initializeFeedFragment();
         if (isTablet) {
-            textView = findViewById(R.id.additional_frame_empty_text);
-            textView.setVisibility(View.VISIBLE);
+            instructionTextView = findViewById(R.id.additional_frame_empty_text);
+            instructionTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -100,6 +107,7 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.news_main_frame, newsFeedFragment, FEED_TAG)
                 .commit();
+        Log.i(TAG, "FM backstack count: " + getSupportFragmentManager().getBackStackEntryCount());
     }
 
     @Override
@@ -120,13 +128,13 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
                             .remove(detailsFragment)
                             .commit();
                     feedFragment.reload(id);
-                    this.textView.setVisibility(View.VISIBLE);
+                    showAdditionalFrameState(State.HasNoData);
                 } catch (DetailsFragmentIsEmptyException e) {
-
-                    //TODO show state
+                    showAdditionalFrameState(State.HasNoData);
                 }
                 break;
         }
+        Log.i(TAG, "FM backstack count: " + getSupportFragmentManager().getBackStackEntryCount());
         return super.onOptionsItemSelected(item);
     }
 
@@ -136,11 +144,30 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public void onBackPressed() {
+        Log.i(TAG, "onBackPressed: back pressed");
+        Log.i(TAG, "FM backstack count: " + getSupportFragmentManager().getBackStackEntryCount());
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+            List<Fragment> fragments = getSupportFragmentManager().getFragments();
+            for (Fragment fragment : fragments) {
+                if (fragment instanceof NewsDetailsFragment)
+                    getSupportFragmentManager().beginTransaction()
+                            .remove(fragment)
+                            .commit();
+                getSupportFragmentManager().popBackStack();
+                Log.i(TAG, "onBackPressed: details fragment removed");
+            }
+        } else finish();
+    }
+
     private void showAdditionalFrameState(State state) {
         switch (state) {
             case HasData:
+                this.instructionTextView.setVisibility(View.GONE);
                 break;
             case HasNoData:
+                this.instructionTextView.setVisibility(View.VISIBLE);
                 break;
         }
     }

@@ -167,9 +167,8 @@ public class NewsDetailsFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        findNewsItemDisposable.dispose();
-        if (deleteNewsItemDisposable != null)
-            deleteNewsItemDisposable.dispose();
+        if (findNewsItemDisposable != null) findNewsItemDisposable.dispose();
+        if (deleteNewsItemDisposable != null) deleteNewsItemDisposable.dispose();
         super.onDestroy();
     }
 

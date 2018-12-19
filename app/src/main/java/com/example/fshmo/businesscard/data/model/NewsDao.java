@@ -8,13 +8,14 @@ import androidx.room.Query;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 
 @Dao
 public interface NewsDao {
 
     @Query("SELECT * FROM news")
-    List<NewsEntity> getAll();
+    Flowable<List<NewsEntity>> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(NewsEntity ... newsEntities);

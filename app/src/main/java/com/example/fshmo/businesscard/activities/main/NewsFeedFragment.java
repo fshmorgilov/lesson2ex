@@ -1,23 +1,27 @@
-package com.example.fshmo.businesscard.activities;
+package com.example.fshmo.businesscard.activities.main;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.example.fshmo.businesscard.activities.about.AboutActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -27,7 +31,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.activities.decorators.GridSpaceItemDecoration;
-import com.example.fshmo.businesscard.data.DataCache;
 import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.data.model.AppDatabase;
 import com.example.fshmo.businesscard.data.model.NewsDao;
@@ -39,27 +42,39 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class NewsFeedActivity extends AppCompatActivity {
+public class NewsFeedFragment extends Fragment {
 
-    private static final String TAG = NewsFeedActivity.class.getCanonicalName();
+    private static final String TAG = NewsFeedFragment.class.getCanonicalName();
 
-    private ProgressBar progressBar;
-    private FrameLayout recyclerFrame;
-    private View errorView;
-    private View errorNoData;
-    private Button retryBtn;
-    private FloatingActionButton fab;
-    private RecyclerView recyclerView;
+    @BindView(R.id.recycler_frame)
+    FrameLayout recyclerFrame;
+    @BindView(R.id.view_error)
+    View errorView;
+    @BindView(R.id.view_no_data)
+    View errorNoData;
+    @BindView(R.id.btn_retry_error)
+    Button retryBtn;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.feed_toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
+    private View fragmentMainView;
     private NewsFeedAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.ItemDecoration decoration;
-    private Toolbar toolbar;
     private AlertDialog.Builder alertBuilder;
 
     private List<NewsItem> newsItems = new ArrayList<>();
@@ -71,74 +86,82 @@ public class NewsFeedActivity extends AppCompatActivity {
     private Disposable disposable;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private NewsDao newsDao;
+    private MainFragmentListener listener;
+    private Unbinder unbinder;
 
-    public static void start(Activity activity) {
-        Intent intent = new Intent(activity, NewsFeedActivity.class);
-        activity.startActivity(intent);
+    public static Fragment newInstance() {
+        return new NewsFeedFragment();
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_feed);
-        newsDao = AppDatabase.getInstance(this).newsDao();
-        initializeViews();
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (getActivity() instanceof MainFragmentListener) {
+            listener = (MainFragmentListener) getActivity();
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    public void selectCategory() {
+        alertBuilder.show();
+    }
+
+    @Override
+    public void onResume() {
+        Log.i(TAG, "onAttach: reattached...");
+//        observeDb();
+        super.onResume();
+    }
+
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        fragmentMainView = inflater.inflate(R.layout.activity_news_feed, container, false);
+        newsDao = AppDatabase.getInstance(getContext()).newsDao();
+        unbinder = ButterKnife.bind(this, fragmentMainView);
+        initialize();
         configuresViews();
         showState(State.HasData);
         observeDb();
+        return fragmentMainView;
     }
 
     @Override
-    protected void onRestart() {
-        Log.i(TAG, "onRestart: resuming...");
-        newsItems.clear();
-        observeDb();
-        adapter.notifyDataSetChanged();
-        super.onRestart();
+    public void onDestroyView() {
+        unbinder.unbind();
+        compositeDisposable.dispose();
+        super.onDestroyView();
     }
 
     private void observeDb() {
         compositeDisposable.add(
-                Observable.just(true)
-                        .map(aBoolean -> newsDao.getAll())
+                newsDao.getAll()
                         .map(NewsItemHelper::convertDaoListoToDomain)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(this::showItems)
+                        .subscribe(this::resetDataset)
         );
+        Log.i(TAG, "observeDb: Displaying news");
     }
 
-    @Override
-    protected void onDestroy() {
-        progressBarProgress = 0;
-        if (disposable != null)
-            disposable.dispose();
-        DataCache.invalidateNewsCache();
-        super.onDestroy();
-    }
-
-    private void initializeViews() {
+    private void initialize() {
         Log.i(TAG, "Initializing...");
-        errorNoData = findViewById(R.id.view_no_data);
-        errorView = findViewById(R.id.view_error);
-        retryBtn = findViewById(R.id.btn_retry_error);
-        fab = findViewById(R.id.fab);
-        recyclerFrame = findViewById(R.id.recycler_frame);
-        alertBuilder = new AlertDialog.Builder(this);
-
-        progressBar = findViewById(R.id.progress_bar);
+        alertBuilder = new AlertDialog.Builder(getContext());
         progressBar.setProgress(0);
-        toolbar = findViewById(R.id.feed_toolbar);
 
         orientation = this.getResources().getConfiguration().orientation;
-        RequestManager glide = Glide.with(this);
-        recyclerView = findViewById(R.id.recycler_view);
+        RequestManager glide = Glide.with(getContext());
         adapter = new NewsFeedAdapter(
                 newsItems,
                 glide,
                 item -> {
                     Log.e(TAG, "News item selected: " + item.getTitle());
-                    NewsDetailsActivity.start(NewsFeedActivity.this, item);
+                    listener.onClicked(item);
                 });
         decoration = new GridSpaceItemDecoration(4, 4);
         Log.i(TAG, "Initializing done");
@@ -148,10 +171,11 @@ public class NewsFeedActivity extends AppCompatActivity {
         Log.i(TAG, "Configuring...");
 
         recyclerView.setHasFixedSize(true);
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            layoutManager = new LinearLayoutManager(this);
-        } else
-            layoutManager = new GridLayoutManager(this, 2);
+        if (orientation == Configuration.ORIENTATION_PORTRAIT || NewsMainActivity.isTablet(getContext())) {
+            layoutManager = new LinearLayoutManager(getActivity());
+        } else {
+            layoutManager = new GridLayoutManager(getActivity(), 2);
+        }
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
@@ -162,10 +186,7 @@ public class NewsFeedActivity extends AppCompatActivity {
                         (dialog, which) -> {
                             this.categoryName = categoryNames[which];
                             toolbar.setTitle(this.categoryName.toUpperCase());
-                            int current_size = newsItems.size();
-                            this.newsItems.clear();
-                            adapter.notifyItemRangeRemoved(0, current_size);
-                            loadToDb();
+                            displayNews();
                         }
                 );
 
@@ -173,7 +194,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         fab.setOnClickListener(v -> displayNews());
 
         toolbar.setTitle(this.categoryName.toUpperCase());
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar); fixme тулбар
 
         Log.i(TAG, "Configuring done");
     }
@@ -189,7 +210,7 @@ public class NewsFeedActivity extends AppCompatActivity {
                         .subscribe(
                                 newsEntities -> {
                                     newsDao.deleteAll();
-                                    progressStep = 100/newsEntities.length;
+                                    progressStep = 100 / newsEntities.length;
                                     newsDao.insertAll(newsEntities);
                                 },
                                 this::logItemError
@@ -204,7 +225,7 @@ public class NewsFeedActivity extends AppCompatActivity {
         }
     }
 
-    public void showState(@NonNull State state) {
+    private void showState(@NonNull State state) {
         switch (state) {
             case HasData:
                 recyclerView.setVisibility(View.VISIBLE);
@@ -253,41 +274,71 @@ public class NewsFeedActivity extends AppCompatActivity {
                 throw new IllegalArgumentException("Unknown state: " + state);
 
         }
-        manageFab(state);
+        manageFabState(state);
+        manageToolbarState();
         Log.i(TAG, "Showing state: " + state.name());
     }
 
-    private void manageFab(State state){
-        if (state == State.HasData
-                || state == State.NetworkError){
-            fab.setEnabled(true);
-            fab.setClickable(true);
-            fab.setAlpha(1.0f);
-        } else {
+    private void manageFabState(State state) {
+        if (NewsMainActivity.isTablet(getContext())) {
             fab.setEnabled(false);
             fab.setClickable(false);
-            fab.setAlpha(0.3f);
+            fab.setAlpha(0.0f);
+        } else {
+            if (state == State.HasData
+                    || state == State.NetworkError) {
+                fab.setEnabled(true);
+                fab.setClickable(true);
+                fab.setAlpha(1.0f);
+            } else {
+                fab.setEnabled(false);
+                fab.setClickable(false);
+                fab.setAlpha(0.3f);
+            }
         }
     }
 
-    private void showItems(@NonNull List<NewsItem> newsItems) {
-        adapter.setDataset(newsItems);
+    private void manageToolbarState() {
+        if (NewsMainActivity.isTablet(getContext()))
+            toolbar.setVisibility(View.GONE);
     }
 
-    private void displayNews(){
+    private void resetDataset(@NonNull List<NewsItem> newsItems) {
+        if (!this.newsItems.isEmpty()) {
+            clearNewsItems();
+        }
+        adapter.setDataset(newsItems);
+        adapter.notifyItemRangeChanged(0, newsItems.size());
+    }
+
+    private void displayNews() {
         showState(State.Loading);
         loadToDb();
         observeDb();
-        Toast.makeText(this, "Displaying news", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Displaying news", Toast.LENGTH_LONG).show();
         showState(State.HasData);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.feed_menu, menu);
-        return true;
+    public void reload(int id) {
+        showState(State.Loading);
+        adapter.notifyItemRemoved(id);
+        Log.i(TAG, "reload: removed item" + id);
+        observeDb();
+        Toast.makeText(getContext(), "Renewing...", Toast.LENGTH_LONG).show();
+        showState(State.HasData);
     }
+
+
+    private void clearNewsItems() {
+        if (newsItems != null) {
+            int size = newsItems.size();
+            newsItems.clear();
+            adapter.notifyItemRangeRemoved(0, size);
+            Log.i(TAG, "clearNewsItems: cleared " + String.valueOf(size) + " items");
+        }
+    }
+
+    //TODO MEnu inflater
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -296,7 +347,7 @@ public class NewsFeedActivity extends AppCompatActivity {
                 alertBuilder.show();
                 return true;
             case R.id.about:
-                AboutActivity.start(NewsFeedActivity.this);
+                AboutActivity.start(getActivity());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

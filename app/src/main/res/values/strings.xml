@@ -13,6 +13,7 @@
     <string name="category_default">home</string>
     <string name="intro_description">intro</string>
     <string name="delete_menu_option">Delete</string>
+    <string name="intro_welcome">Welcome!</string>
     <array name="categories_array">
         <item>home</item>
         <item>opinion</item>
@@ -41,4 +42,6 @@
         <item>obituaries</item>
         <item>nsider</item>
     </array>
+    <string name="title_activity_news_main">NewsMainActivity</string>
+    <string name="select_news_item">Please select news item to te left</string>
 </resources>

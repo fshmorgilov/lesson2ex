@@ -10,8 +10,10 @@ import android.util.Log;
 
 import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.data.repository.NewsRepository;
+import com.example.fshmo.businesscard.utils.NetworkUtils;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -33,7 +35,9 @@ public class NewsRequestService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand: service starting");
-        downloadDisposable = NewsRepository.downloadUpdates()
+        downloadDisposable = NetworkUtils.getInstance().getOnlineNetwork()
+                .timeout(1, TimeUnit.MINUTES)
+                .flatMap(aLong -> NewsRepository.downloadUpdates())
                 .subscribe(
                         newsEntities -> {
                             NewsRepository.saveToDb(newsEntities);
@@ -49,7 +53,8 @@ public class NewsRequestService extends Service {
     private void logError(Throwable throwable) {
         if (throwable instanceof IOException) {
             Log.e(TAG, "logError: " + throwable.getMessage());
-        } else Log.e(TAG, "logError: cant do anything");
+        } else
+            Log.e(TAG, "logError: stopped unexpectedly : \n" + throwable.getMessage());
         makeNotification(errorMessage, false);
     }
 

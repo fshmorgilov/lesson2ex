@@ -1,6 +1,7 @@
 package com.example.fshmo.businesscard.activities.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.activities.main.exceptions.DetailsFragmentIsEmptyException;
 import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.data.model.AppDatabase;
+import com.example.fshmo.businesscard.services.NewsRequestService;
 import com.example.fshmo.businesscard.utils.NewsItemHelper;
 
 import java.text.SimpleDateFormat;
@@ -101,6 +103,7 @@ public class NewsDetailsFragment extends Fragment {
         mainFragmentListener = (MainFragmentListener) getActivity();
         initializeViews();
         findNewsItem();
+        getActivity().startService(new Intent(getActivity(), NewsRequestService.class));
         return fragmentMainView;
     }
 

@@ -21,12 +21,4 @@ public class App extends Application {
         registerReceiver(NetworkUtils.getInstance().getReceiver(),
                 new IntentFilter((ConnectivityManager.CONNECTIVITY_ACTION)));
     }
-
-    public synchronized boolean isNetworkAvaliable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
-        if (connectivityManager == null)
-            return false;
-        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-        return info != null && info.isConnected();
-    }
 }

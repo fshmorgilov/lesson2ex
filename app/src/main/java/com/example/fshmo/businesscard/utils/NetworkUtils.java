@@ -3,6 +3,8 @@ package com.example.fshmo.businesscard.utils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.example.fshmo.businesscard.App;
 
@@ -11,11 +13,13 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
+
 public class NetworkUtils {
 
     private static NetworkUtils networkUtils;
-    private NetworkReceiver receiver;
-    private Subject<Boolean> networkState = BehaviorSubject.createDefault(App.INSTANCE.isNetworkAvaliable());
+    private NetworkReceiver receiver = new NetworkReceiver();
+    private Subject<Boolean> networkState = BehaviorSubject.createDefault(isNetworkAvailable());
 
 
     public static NetworkUtils getInstance() {
@@ -26,6 +30,16 @@ public class NetworkUtils {
                 }
             return networkUtils;
         }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) App.INSTANCE
+                .getApplicationContext()
+                .getSystemService(CONNECTIVITY_SERVICE);
+        if (connectivityManager == null)
+            return false;
+        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+        return info != null && info.isConnected();
     }
 
     public NetworkReceiver getReceiver() {
@@ -42,7 +56,7 @@ public class NetworkUtils {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            networkState.onNext(App.INSTANCE.isNetworkAvaliable());
+            networkState.onNext(isNetworkAvailable());
         }
     }
 }

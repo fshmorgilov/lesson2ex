@@ -61,8 +61,6 @@ public class NewsRequestService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        //TODO Broadcast Receiver
     }
 
     private void makeNotification(String message, boolean happy) {

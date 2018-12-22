@@ -55,6 +55,8 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknife_version"
     // Stetho core
     api 'com.facebook.stetho:stetho:1.5.0'
+    //Work Manager
+    implementation "android.arch.work:work-runtime:1.0.0-beta01"
     //If you want to add a network helper
     api 'com.facebook.stetho:stetho-okhttp:1.5.0'
     implementation "com.android.support:support-compat:28.0.0"//

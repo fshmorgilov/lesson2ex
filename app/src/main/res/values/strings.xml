@@ -14,6 +14,7 @@
     <string name="intro_description">intro</string>
     <string name="delete_menu_option">Delete</string>
     <string name="intro_welcome">Welcome!</string>
+    <string name="cancel_work">Cancel</string>
     <array name="categories_array">
         <item>home</item>
         <item>opinion</item>

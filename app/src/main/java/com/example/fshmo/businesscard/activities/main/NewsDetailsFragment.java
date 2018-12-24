@@ -103,7 +103,6 @@ public class NewsDetailsFragment extends Fragment {
         mainFragmentListener = (MainFragmentListener) getActivity();
         initializeViews();
         findNewsItem();
-        getActivity().startService(new Intent(getActivity(), NewsRequestService.class));
         return fragmentMainView;
     }
 

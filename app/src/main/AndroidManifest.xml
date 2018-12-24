@@ -32,8 +32,6 @@
             android:label="@string/title_activity_news_main"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
-        <service
-            android:name=".services.NewsRequestService"
-            android:exported="false" />
+        <receiver android:name=".utils.NetworkUtils$NetworkReceiver" />
     </application>
 </manifest>

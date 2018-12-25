@@ -2,22 +2,25 @@ package com.example.fshmo.businesscard.activities.about;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.example.fshmo.businesscard.R;
+import com.example.fshmo.businesscard.base.MvpAppCompatActivity;
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutActivity extends MvpAppCompatActivity implements AboutView {
 
     private static final String LTAG = AboutActivity.class.getName();
-    private final String[] addresses = new String[]{"fshmorgilov@gmail.com"};
+
+    @InjectPresenter
+    private AboutPresenter presenter;
 
     public static void start(Activity activity) {
         Intent intent = new Intent(activity, AboutActivity.class);
@@ -31,57 +34,26 @@ public class AboutActivity extends AppCompatActivity {
 
         final Button instagramBtn = findViewById(R.id.social_instagram);
         instagramBtn.setBackgroundResource(R.drawable.instagram_logo);
-        instagramBtn.setOnClickListener(v -> openWebPage("https://www.instagram.com/fedorthemaker/"));
+        instagramBtn.setOnClickListener(v -> presenter.openInstagram());
 
         final Button facebookBtn = findViewById(R.id.social_facebook);
         facebookBtn.setBackgroundResource(R.drawable.facebook_logo);
-        facebookBtn.setOnClickListener(v -> openWebPage("https://www.facebook.com/fedor.shmorgilov"));
+        facebookBtn.setOnClickListener(v -> presenter.openFacebook());
 
         final Button telegramBtn = findViewById(R.id.social_telegram);
         telegramBtn.setBackgroundResource(R.drawable.telegram_logo);
-        telegramBtn.setOnClickListener(v -> openWebPage("https://t.me/Iyanamas"));
+        telegramBtn.setOnClickListener(v -> presenter.openTelegram());
 
         final EditText sendMail = findViewById(R.id.send_mail);
         final String text = sendMail.getText().toString().trim();
-        sendMail.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEND) {
-                composeEmail(addresses, "Nice to meet you!", text);
-            }
+        sendMail.setOnEditorActionListener((TextView v, int actionId, KeyEvent event) -> {
+                presenter.composeEmail(actionId, text);
             return false;
         });
     }
 
-    public void openWebPage(String url) {
-        Uri webpage = Uri.parse(url);
-        final String errorMessage = "No app compatible";
-        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            Log.d(LTAG, "Navigated to: " + url);
-            startActivity(intent);
-        } else {
-            Log.i(LTAG, errorMessage);
-            showToast(errorMessage);
-        }
-    }
-
-    private void showToast(String s) {
+    public void showToast(String s) {
         Toast.makeText(AboutActivity.this, s, Toast.LENGTH_LONG).show();
     }
 
-    private void composeEmail(String[] addresses, @NonNull final String subject, @NonNull final String body) {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("*/*");
-        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        intent.putExtra(Intent.EXTRA_TEXT, body);
-        Log.i(LTAG, "Composing email. \n Subject: " + subject + "\n Body : " + body);
-        final String errorMessage = "No email app";
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            Log.i(LTAG, "Composed");
-            startActivity(intent);
-        } else {
-            Log.i(LTAG, errorMessage);
-            showToast(errorMessage);
-        }
-    }
 }

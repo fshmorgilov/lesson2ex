@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activities.main.NewsMainActivity">
+    tools:context=".activities.feed.NewsMainActivity">
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/news_main_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activities.main.NewsMainActivity"
+        tools:context=".activities.feed.NewsMainActivity"
         tools:showIn="@layout/activity_news_main" />
 
     <FrameLayout

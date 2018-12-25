@@ -1,7 +1,6 @@
-package com.example.fshmo.businesscard.activities.main;
+package com.example.fshmo.businesscard.activities.feed;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,10 +16,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.fshmo.businesscard.R;
-import com.example.fshmo.businesscard.activities.main.exceptions.DetailsFragmentIsEmptyException;
+import com.example.fshmo.businesscard.activities.feed.exceptions.DetailsFragmentIsEmptyException;
 import com.example.fshmo.businesscard.data.NewsItem;
 import com.example.fshmo.businesscard.data.model.AppDatabase;
-import com.example.fshmo.businesscard.services.NewsRequestService;
 import com.example.fshmo.businesscard.utils.NewsItemHelper;
 
 import java.text.SimpleDateFormat;

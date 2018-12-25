@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".activities.main.NewsMainActivity">
+    tools:context=".activities.feed.NewsMainActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/main_feed_toolbar"
@@ -22,7 +22,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_below="@id/main_feed_toolbar"
-        tools:context=".activities.main.NewsMainActivity"
+        tools:context=".activities.feed.NewsMainActivity"
         tools:showIn="@layout/activity_news_main" />
 
     <FrameLayout

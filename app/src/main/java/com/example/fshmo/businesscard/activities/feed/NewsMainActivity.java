@@ -1,4 +1,4 @@
-package com.example.fshmo.businesscard.activities.main;
+package com.example.fshmo.businesscard.activities.feed;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.activities.about.AboutActivity;
-import com.example.fshmo.businesscard.activities.main.exceptions.DetailsFragmentIsEmptyException;
+import com.example.fshmo.businesscard.activities.feed.exceptions.DetailsFragmentIsEmptyException;
 import com.example.fshmo.businesscard.data.NewsItem;
 
 import java.util.List;

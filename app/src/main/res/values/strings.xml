@@ -15,6 +15,10 @@
     <string name="delete_menu_option">Delete</string>
     <string name="intro_welcome">Welcome!</string>
     <string name="cancel_work">Cancel</string>
+    <string name="instagram">https://www.instagram.com/fedorthemaker/</string>
+    <string-array name="email_addresses">
+        <item>fshmorgilov@gmail.com</item>
+    </string-array>
     <array name="categories_array">
         <item>home</item>
         <item>opinion</item>
@@ -45,4 +49,6 @@
     </array>
     <string name="title_activity_news_main">NewsMainActivity</string>
     <string name="select_news_item">Please select news item to te left</string>
+    <string name="facebook">https://www.facebook.com/fedor.shmorgilov</string>
+    <string name="telegram">https://t.me/Iyanamas</string>
 </resources>

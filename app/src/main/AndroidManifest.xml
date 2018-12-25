@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.main.NewsMainActivity"
+            android:name=".activities.feed.NewsMainActivity"
             android:label="@string/title_activity_news_main"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 

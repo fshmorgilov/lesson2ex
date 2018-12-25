@@ -1,4 +1,4 @@
-package com.example.fshmo.businesscard.activities.main;
+package com.example.fshmo.businesscard.activities.feed;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -45,7 +45,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;

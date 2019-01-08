@@ -1,4 +1,4 @@
-package com.example.fshmo.businesscard.activities.feed;
+package com.example.fshmo.businesscard.activities.details;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,12 +14,13 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.bumptech.glide.Glide;
 import com.example.fshmo.businesscard.R;
-import com.example.fshmo.businesscard.activities.feed.exceptions.DetailsFragmentIsEmptyException;
+import com.example.fshmo.businesscard.activities.common.State;
+import com.example.fshmo.businesscard.activities.feed.MainFragmentListener;
+import com.example.fshmo.businesscard.activities.feed.NewsMainActivity;
 import com.example.fshmo.businesscard.data.NewsItem;
-import com.example.fshmo.businesscard.data.model.AppDatabase;
-import com.example.fshmo.businesscard.utils.NewsItemHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -28,17 +29,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import io.reactivex.Maybe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
-public class NewsDetailsFragment extends Fragment {
+public class NewsDetailsFragment extends Fragment implements NewsDetailsView {
 
     private static final String TAG = NewsDetailsFragment.class.getName();
-    private static final String KEY_TEXT = "KEY_TEXT";
+    private static final String KEY_ID = "KEY_News_item_id";
 
     private final String DATE_FORMAT = "HH:MM, EEEE, dd MMMM, yyyy";
+
+    @InjectPresenter
+    NewsDetailsPresenter presenter;
 
     private View fragmentMainView;
     private ImageView imageView;
@@ -50,25 +50,21 @@ public class NewsDetailsFragment extends Fragment {
     private WebView webView;
     private NewsItem newsItem;
     private ScrollView newsItemDetailsScroll;
-    private Disposable findNewsItemDisposable;
-    private Disposable deleteNewsItemDisposable;
     private MainFragmentListener mainFragmentListener;
     private TextView selectItem;
-    private MainFragmentListener listener;
+
+    public NewsDetailsFragment() {
+    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        super.onAttach(context);
-        if (getActivity() instanceof MainFragmentListener) {
-            listener = (MainFragmentListener) getActivity();
-        }
     }
 
-    static NewsDetailsFragment newInstance(@NonNull int newsItemId) {
+    public static NewsDetailsFragment newInstance(@NonNull int newsItemId) {
         NewsDetailsFragment fragment = new NewsDetailsFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(KEY_TEXT, newsItemId);
+        bundle.putInt(KEY_ID, newsItemId);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -83,12 +79,7 @@ public class NewsDetailsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case (R.id.delete_news_item):
-                try {
-                    delete();
-                } catch (DetailsFragmentIsEmptyException e) {
-                    Log.e(TAG, "onOptionsItemSelected: newsItemIsnull");
-                }
-                goBack();
+                delete();
                 break;
         }
         return true;
@@ -100,30 +91,17 @@ public class NewsDetailsFragment extends Fragment {
         fragmentMainView = inflater.inflate(R.layout.activity_news_details, container, false);
         mainFragmentListener = (MainFragmentListener) getActivity();
         initializeViews();
-        findNewsItem();
+        presenter.findNewsItem(savedInstanceState.getInt(KEY_ID));
         return fragmentMainView;
     }
 
-    public int delete() throws DetailsFragmentIsEmptyException {
-        if (newsItem == null) {
-            Log.e(TAG, "delete: no news item to delete");
-            throw new DetailsFragmentIsEmptyException();
-        } else {
-            int id = newsItem.getId();
-            deleteNewsItemDisposable = Maybe.just(true)
-                    .doOnSuccess(boo -> AppDatabase.getInstance(getContext()).newsDao().deleteById(id))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            aBoolean -> Log.i(TAG, "onOptionsItemSelected: deleted item: " + id),
-                            (e) -> Log.e(TAG, "onOptionsItemSelected: error deleting item" + e.getMessage())
-                    );
-            Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
-            return id;
-        }
+    public int delete() {
+        presenter.deleteNewsItem(newsItem.getId());
+        Log.i(TAG, "onOptionsItemSelected: item deleted: " + newsItem.getTitle());
+        return newsItem.getId();
     }
 
-    private void goBack() {
+    public void goBack() {
         Log.i(TAG, "goBack: backstack triggered");
         mainFragmentListener.goToFeed();
     }
@@ -146,33 +124,7 @@ public class NewsDetailsFragment extends Fragment {
             toolbar.setVisibility(View.GONE);
     }
 
-    private void findNewsItem() {
-        int newsItemId;
-        newsItemId = getArguments().getInt(KEY_TEXT);
-        Log.i(TAG, "findNewsItem: newsItem id:" + String.valueOf(newsItemId));
-        findNewsItemDisposable = AppDatabase.getInstance(getActivity()).newsDao().findById(newsItemId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(entity -> {
-                            newsItem = NewsItemHelper.convertDaoToDomain(entity);
-                            showState(State.HasData);
-                            displayNewsItem();
-                            Log.i(TAG, "findNewsItem: displaying news item: " + newsItem.getTitle());
-                        },
-                        e -> {
-                            showState(State.HasNoData);
-                            Log.e(TAG, "Error in finding the item: " + e.getMessage());
-                        });
-    }
-
-    @Override
-    public void onDestroy() {
-        if (findNewsItemDisposable != null) findNewsItemDisposable.dispose();
-        if (deleteNewsItemDisposable != null) deleteNewsItemDisposable.dispose();
-        super.onDestroy();
-    }
-
-    private void showState(State state) {
+    public void showState(State state) {
         switch (state) {
             case HasData:
                 webView.setVisibility(View.GONE);
@@ -208,9 +160,9 @@ public class NewsDetailsFragment extends Fragment {
         }
     }
 
-    private void displayNewsItem() {
+    public void displayNewsItem(NewsItem newsItem) {
+        this.newsItem = newsItem;
         webView.loadUrl(newsItem.getNewsItemUrl());
-
         toolbar.setTitle(newsItem.getCategory().getName());
         String url;
         if (newsItem.getImageUrlLarge() != null)

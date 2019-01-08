@@ -1,4 +1,4 @@
-package com.example.fshmo.businesscard.activities.feed;
+package com.example.fshmo.businesscard.activities.common;
 
 public enum State {
 

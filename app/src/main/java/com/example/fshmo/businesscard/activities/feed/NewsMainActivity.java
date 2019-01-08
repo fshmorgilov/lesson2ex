@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.example.fshmo.businesscard.R;
 import com.example.fshmo.businesscard.activities.about.AboutActivity;
+import com.example.fshmo.businesscard.activities.common.State;
+import com.example.fshmo.businesscard.activities.details.NewsDetailsFragment;
 import com.example.fshmo.businesscard.activities.feed.exceptions.DetailsFragmentIsEmptyException;
 import com.example.fshmo.businesscard.data.NewsItem;
 
@@ -129,16 +131,12 @@ public class NewsMainActivity extends AppCompatActivity implements MainFragmentL
                 feedFragment.selectCategory();
                 break;
             case R.id.tablet_delete_news_item:
-                try {
                     int id = detailsFragment.delete();
                     getSupportFragmentManager().beginTransaction()
                             .remove(detailsFragment)
                             .commit();
                     feedFragment.reload(id);
                     showAdditionalFrameState(State.HasNoData);
-                } catch (DetailsFragmentIsEmptyException e) {
-                    showAdditionalFrameState(State.HasNoData);
-                }
                 break;
         }
         Log.i(TAG, "FM backstack count: " + getSupportFragmentManager().getBackStackEntryCount());

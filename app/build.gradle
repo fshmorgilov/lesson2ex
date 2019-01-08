@@ -26,6 +26,7 @@ dependencies {
     def butterknife_version = "9.0.0-rc2"
     def room_version = "2.1.0-alpha02"
     def moxy_version = "1.5.5"
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'

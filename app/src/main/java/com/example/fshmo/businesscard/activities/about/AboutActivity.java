@@ -20,7 +20,7 @@ public class AboutActivity extends MvpAppCompatActivity implements AboutView {
     private static final String LTAG = AboutActivity.class.getName();
 
     @InjectPresenter
-    private AboutPresenter presenter;
+    AboutPresenter presenter;
 
     public static void start(Activity activity) {
         Intent intent = new Intent(activity, AboutActivity.class);
